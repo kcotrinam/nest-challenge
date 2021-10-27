@@ -3,11 +3,6 @@ import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 
 export class CreateProductDto {
   @Expose()
-  @IsNumber()
-  @IsNotEmpty()
-  readonly id: number;
-
-  @Expose()
   @IsString()
   @IsNotEmpty()
   @Length(1, 100)
@@ -30,15 +25,5 @@ export class CreateProductDto {
   @Expose()
   @IsNotEmpty()
   @IsNumber()
-  readonly likeCounter: number;
-
-  @Expose()
-  @IsNotEmpty()
-  @IsNumber()
   readonly price: number;
-
-  @Expose()
-  @IsNotEmpty()
-  @IsNumber()
-  readonly categoryId: number;
 }

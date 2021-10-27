@@ -12,7 +12,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from '@prisma/client';
 
-@Controller('categories/categoryId')
+@Controller('categories/:categoryId')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 

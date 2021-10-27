@@ -6,8 +6,8 @@ export class CreateLikeDto {
   // @IsNotEmpty()
   // @IsNumber()
   // userId: number;
-  @Expose()
-  @IsNotEmpty()
-  @IsNumber()
-  productId: number;
+  // @Expose()
+  // @IsNotEmpty()
+  // @IsNumber()
+  // productId: number;
 }
