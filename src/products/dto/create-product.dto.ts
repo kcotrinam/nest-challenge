@@ -4,18 +4,18 @@ import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 export class CreateProductDto {
   @Expose()
   @IsNumber()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   readonly id: number;
 
   @Expose()
   @IsString()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   @Length(1, 100)
   readonly name: string;
 
   @Expose()
   @IsString()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   readonly description: string;
 
   @Expose()
@@ -23,22 +23,22 @@ export class CreateProductDto {
   readonly image: string;
 
   @Expose()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   @IsNumber()
   readonly stock: number;
 
   @Expose()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   @IsNumber()
   readonly likeCounter: number;
 
   @Expose()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   @IsNumber()
   readonly price: number;
 
   @Expose()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   @IsNumber()
   readonly categoryId: number;
 }

@@ -4,12 +4,12 @@ import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 export class CreateCategoryDto {
   @Expose()
   @IsNumber()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   readonly id: number;
 
   @Expose()
   @IsString()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   @Length(1, 100)
   readonly name: string;
 }
