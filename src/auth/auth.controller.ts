@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Patch, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Param, Patch, Post, Res } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { CreateUserDto } from '../users/dtos/request/create-user.dto';
 import { AuthService } from './auth.service';

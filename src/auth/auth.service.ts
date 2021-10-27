@@ -45,14 +45,12 @@ export class AuthService {
       throw createError(400, 'Invalid token');
     }
 
-    const confirmedUser = await this.prisma.user.update({
+    await this.prisma.user.update({
       where: { id: +input.id },
       data: {
         emailVerificationToken: null,
         emailVerifiedAt: new Date(),
       },
     });
-
-    console.log(confirmedUser);
   }
 }

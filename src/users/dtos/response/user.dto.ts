@@ -19,5 +19,9 @@ export class UserDto {
 
   @Expose()
   @Transform(({ value }) => value?.toString())
+  readonly emailVerifiedAt: Date;
+
+  @Expose()
+  @Transform(({ value }) => value?.toString())
   readonly createdAt: Date;
 }

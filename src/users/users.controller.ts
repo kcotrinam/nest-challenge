@@ -12,7 +12,7 @@ export class UsersController {
     res.status(200).json(users);
   }
 
-  @Get('/:id')
+  @Get(':id')
   async findOne(@Param('id') id: string, @Res() res) {
     const user = await this.usersService.findOne(+id);
 
