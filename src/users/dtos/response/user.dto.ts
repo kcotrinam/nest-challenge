@@ -15,6 +15,9 @@ export class UserDto {
   email: string;
 
   @Expose()
+  emailVerificationToken: string;
+
+  @Expose()
   @Transform(({ value }) => value?.toString())
   readonly createdAt: Date;
 }
