@@ -9,7 +9,7 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(): Promise<UserDto[]> {
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({});
 
     return plainToClass(UserDto, users);
   }
@@ -20,10 +20,8 @@ export class UsersService {
     });
 
     if (!user) {
-      console.log(user);
       throw new createError.NotFound(`User ${id} not found`);
     }
-    console.log(`outter scope${user}`);
 
     return plainToClass(UserDto, user);
   }
