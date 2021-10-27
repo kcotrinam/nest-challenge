@@ -10,14 +10,10 @@ import {
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { PrismaService } from 'src/prisma-service/prisma.service';
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(
-    private readonly categoriesService: CategoriesService,
-    private readonly prismaService: PrismaService,
-  ) {}
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto) {
