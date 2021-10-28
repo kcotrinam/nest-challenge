@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma-service/prisma.service';
@@ -13,7 +13,9 @@ export class ProductsService {
   }
 
   async findAll() {
-    return await this.prismaService.product.findMany({});
+    return await this.prismaService.product.findMany({
+      where: { isDisabled: false },
+    });
   }
 
   async findOne(id: number) {
