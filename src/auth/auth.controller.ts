@@ -3,6 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { CreateUserDto } from '../users/dtos/request/create-user.dto';
 import { AuthService } from './auth.service';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
+import { SignInDto } from './sign-in.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -16,6 +17,15 @@ export class AuthController {
     const user = await this.authService.signUp(dto);
 
     res.status(200).json(user);
+  }
+
+  @Post('sign-in')
+  signIn(@Body() userInfo, @Res() res) {
+    const dto = plainToClass(SignInDto, userInfo);
+
+    this.authService.signIn(dto);
+
+    res.status(200).json(userInfo);
   }
 
   @Patch(':id/:token')

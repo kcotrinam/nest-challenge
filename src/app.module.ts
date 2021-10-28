@@ -7,6 +7,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { LikesModule } from './likes/likes.module';
+import { TokensModule } from './tokens/tokens.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { LikesModule } from './likes/likes.module';
     UsersModule,
     AuthModule,
     LikesModule,
+    TokensModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

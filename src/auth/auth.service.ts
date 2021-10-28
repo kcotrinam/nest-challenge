@@ -7,10 +7,15 @@ import createError from 'http-errors';
 import { plainToClass } from 'class-transformer';
 import { UserDto } from 'src/users/dtos/response/user.dto';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
+import { SignInDto } from './sign-in.dto';
+import { TokensService } from 'src/tokens/tokens.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly tokenService: TokensService,
+  ) {}
 
   async signUp(input: CreateUserDto) {
     if (
@@ -33,6 +38,23 @@ export class AuthService {
     });
 
     return plainToClass(UserDto, user);
+  }
+
+  async signIn(input: SignInDto) {
+    const { email, password } = input;
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) throw createError(401, 'Wrong credentials provided');
+
+    const IsPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!IsPasswordValid) throw createError(401, 'Wrong credentials provided');
+
+    const token = await this.tokenService.createToken(user.id);
+
+    console.log(token);
   }
 
   async verifyEmail(input: VerifyEmailDto): Promise<void> {
