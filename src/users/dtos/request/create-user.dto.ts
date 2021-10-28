@@ -1,5 +1,5 @@
 import { Expose, Exclude } from 'class-transformer';
-import { IsNotEmpty, IsString, IsOptional, Length } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 import { BaseDto } from '../base.dto';
 // import { BaseDto } from '../../base.dto';
 
