@@ -20,12 +20,12 @@ export class AuthController {
   }
 
   @Post('sign-in')
-  signIn(@Body() userInfo, @Res() res) {
+  async signIn(@Body() userInfo, @Res() res) {
     const dto = plainToClass(SignInDto, userInfo);
 
-    this.authService.signIn(dto);
+    const response = await this.authService.signIn(dto);
 
-    res.status(200).json(userInfo);
+    res.status(200).json(response);
   }
 
   @Patch(':id/:token')

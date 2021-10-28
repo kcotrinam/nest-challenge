@@ -1,4 +1,4 @@
-import { Exclude, Expose, Transform } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class UserDto {
@@ -13,15 +13,4 @@ export class UserDto {
 
   @Expose()
   email: string;
-
-  @Expose()
-  emailVerificationToken: string;
-
-  @Expose()
-  @Transform(({ value }) => value?.toString())
-  readonly emailVerifiedAt: Date;
-
-  @Expose()
-  @Transform(({ value }) => value?.toString())
-  readonly createdAt: Date;
 }
