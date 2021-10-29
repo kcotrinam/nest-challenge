@@ -7,12 +7,12 @@ import {
   Param,
   Delete,
   Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from '@prisma/client';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 @Controller('categories/:categoryId')
 export class ProductsController {
@@ -25,9 +25,13 @@ export class ProductsController {
 
   @Get('products')
   async findAll(
-    @Query() paginationQuery: PaginationQueryDto,
-  ): Promise<Product[]> {
-    return await this.productsService.findAll(paginationQuery);
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
+  ) {
+    return this.productsService.findAll({
+      page,
+      perPage,
+    });
   }
 
   @Get('products/:id')
