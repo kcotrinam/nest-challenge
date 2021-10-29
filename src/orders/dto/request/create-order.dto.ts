@@ -12,12 +12,4 @@ export class CreateOrderDto {
   @IsNotEmpty()
   @IsBoolean()
   readonly isPaid: boolean;
-
-  @Expose()
-  @IsString()
-  readonly email: string;
-
-  @Expose()
-  @IsNotEmpty()
-  readonly userId: number;
 }

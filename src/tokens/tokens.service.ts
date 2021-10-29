@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma-service/prisma.service';
-import jwt from 'jsonwebtoken';
+import jwt = require('jsonwebtoken');
 import createError from 'http-errors';
 
 const secret = 'secret';

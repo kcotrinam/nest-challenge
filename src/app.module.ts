@@ -37,10 +37,15 @@ export class AppModule implements NestModule {
       .apply(LoggerMiddleware)
       .exclude(
         { path: 'auth', method: RequestMethod.POST },
-        { path: 'categories/:categoryId/products', method: RequestMethod.GET },
-        { path: 'orders', method: RequestMethod.GET },
+        {
+          path: 'accounts/me/categories/:categoryId/products',
+          method: RequestMethod.GET,
+        },
+        { path: 'accounts/me/orders', method: RequestMethod.GET },
+        // { path: 'accounts/:userId/orders', method: RequestMethod.GET },
         { path: 'categories', method: RequestMethod.GET },
         { path: 'users', method: RequestMethod.GET },
+        'accounts/me/orders/(.*)',
         'auth/(.*)',
       )
       .forRoutes('*');
