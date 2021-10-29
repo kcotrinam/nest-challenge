@@ -9,7 +9,6 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   Res,
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
