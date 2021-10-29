@@ -3,15 +3,24 @@ import { plainToClass } from 'class-transformer';
 import { PrismaService } from 'src/prisma-service/prisma.service';
 import { UserDto } from './dtos/response/user.dto';
 import createError from 'http-errors';
+import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
+import { paginatedHelper } from 'src/pagination/pagination.helper';
+import { paginationSerializer } from 'src/pagination/serializer';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<UserDto[]> {
-    const users = await this.prisma.user.findMany({});
-
-    return plainToClass(UserDto, users);
+  async findAll(paginationQuery: PaginationQueryDto) {
+    const { page, perPage } = paginationQuery;
+    const { skip, take } = paginatedHelper(paginationQuery);
+    const total = await this.prisma.user.count();
+    const pageInfo = paginationSerializer(total, { page, perPage });
+    const users = await this.prisma.user.findMany({
+      skip,
+      take,
+    });
+    return { pageInfo, data: users };
   }
 
   async findOne(id: number): Promise<UserDto> {

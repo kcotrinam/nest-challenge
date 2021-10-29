@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
-  Req,
+  Query,
   Res,
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
@@ -17,8 +19,15 @@ import { OrdersService } from './orders.service';
 export class OrdersController {
   constructor(private readonly orderService: OrdersService) {}
   @Get()
-  async findAll(@Res() res, @Req() req) {
-    const orders = await this.orderService.findAll();
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
+    @Res() res,
+  ) {
+    const orders = await this.orderService.findAll({
+      page,
+      perPage,
+    });
 
     res.status(200).json(orders);
   }

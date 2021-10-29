@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PrismaService } from 'src/prisma-service/prisma.service';
+import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
+import { paginatedHelper } from 'src/pagination/pagination.helper';
+import { paginationSerializer } from 'src/pagination/serializer';
 
 @Injectable()
 export class CategoriesService {
@@ -12,8 +15,16 @@ export class CategoriesService {
     return await this.prismaService.category.create({ data: category });
   }
 
-  async findAll() {
-    return await this.prismaService.category.findMany();
+  async findAll(paginationQuery: PaginationQueryDto) {
+    const { page, perPage } = paginationQuery;
+    const { skip, take } = paginatedHelper(paginationQuery);
+    const total = await this.prismaService.category.count();
+    const pageInfo = paginationSerializer(total, { page, perPage });
+    const categories = await this.prismaService.category.findMany({
+      skip,
+      take,
+    });
+    return { pageInfo, data: categories };
   }
 
   async findOne(id: number) {

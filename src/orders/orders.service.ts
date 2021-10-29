@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
+import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
+import { paginatedHelper } from 'src/pagination/pagination.helper';
+import { paginationSerializer } from 'src/pagination/serializer';
 import { PrismaService } from 'src/prisma-service/prisma.service';
 import { CreateOrderDto } from './dto/request/create-order.dto';
 import { UpdateOrderDto } from './dto/request/update-order.dto';
@@ -9,8 +12,16 @@ import { OrderDto } from './dto/response/order.dto';
 export class OrdersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<OrderDto[]> {
-    return await this.prisma.order.findMany({});
+  async findAll(paginationQuery: PaginationQueryDto) {
+    const { page, perPage } = paginationQuery;
+    const { skip, take } = paginatedHelper(paginationQuery);
+    const total = await this.prisma.order.count();
+    const pageInfo = paginationSerializer(total, { page, perPage });
+    const orders = await this.prisma.order.findMany({
+      skip,
+      take,
+    });
+    return { pageInfo, data: orders };
   }
 
   async create(order: CreateOrderDto): Promise<OrderDto> {
