@@ -1,7 +1,8 @@
-import { Injectable, Req } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma-service/prisma.service';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 @Injectable()
 export class ProductsService {
@@ -12,9 +13,18 @@ export class ProductsService {
     return await this.prismaService.product.create({ data: product });
   }
 
-  async findAll() {
+  async findAll(paginationQuery: PaginationQueryDto) {
+    let { limit, offset } = paginationQuery;
+    if (!offset) {
+      offset = 1;
+    }
+    if (!limit) {
+      limit = 1;
+    }
     return await this.prismaService.product.findMany({
       where: { isDisabled: false },
+      take: +limit,
+      skip: +offset,
     });
   }
 
