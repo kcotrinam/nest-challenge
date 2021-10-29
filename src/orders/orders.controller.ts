@@ -9,33 +9,59 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   Res,
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { CreateOrderDto } from './dto/request/create-order.dto';
 import { OrdersService } from './orders.service';
 
-@Controller('orders')
+@Controller()
 export class OrdersController {
   constructor(private readonly orderService: OrdersService) {}
-  @Get()
+  @Get('accounts/me/orders')
+  async findOwnOrders(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
+    @Res() res,
+    @Req() req,
+  ) {
+    const orders = await this.orderService.findOwnOrders(
+      {
+        page,
+        perPage,
+      },
+      +req.currentUser,
+    );
+
+    res.status(200).json(orders);
+  }
+
+  @Get('accounts/:userId/orders')
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
     @Res() res,
+    @Req() req,
+    @Param('userId') userId: string,
   ) {
-    const orders = await this.orderService.findAll({
-      page,
-      perPage,
-    });
+    const userLoggedRole = req.currentUserRole;
+    const orders = await this.orderService.findAll(
+      {
+        page,
+        perPage,
+      },
+      userLoggedRole,
+      +userId,
+    );
 
     res.status(200).json(orders);
   }
 
   @Post()
-  async create(@Body() orderInfo, @Res() res) {
+  async create(@Req() req, @Body() orderInfo, @Res() res) {
     const dto = plainToClass(CreateOrderDto, orderInfo);
-    const order = await this.orderService.create(dto);
+    const order = await this.orderService.create(+req.currentUser, dto);
 
     return res.status(201).json(order);
   }
