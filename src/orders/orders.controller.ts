@@ -24,7 +24,6 @@ export class OrdersController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
     @Res() res,
-    @Req() req,
   ) {
     const orders = await this.orderService.findAll({
       page,
