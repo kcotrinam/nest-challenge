@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   Res,
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
@@ -16,7 +17,7 @@ import { OrdersService } from './orders.service';
 export class OrdersController {
   constructor(private readonly orderService: OrdersService) {}
   @Get()
-  async findAll(@Res() res) {
+  async findAll(@Res() res, @Req() req) {
     const orders = await this.orderService.findAll();
 
     res.status(200).json(orders);

@@ -15,6 +15,7 @@ model User {
   name        String
   lastname    String
   email       String @unique
+  isManager   Boolean @default(value: false) @map("is_manager")   
   password    String
   emailVerificationToken String? @map("email_verification_token")
   emailVerifiedAt DateTime? @map("email_verified_at")

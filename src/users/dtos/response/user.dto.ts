@@ -9,6 +9,9 @@ export class UserDto {
   name: string;
 
   @Expose()
+  isManager: boolean;
+
+  @Expose()
   lastname: string;
 
   @Expose()

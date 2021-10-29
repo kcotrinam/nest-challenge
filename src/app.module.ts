@@ -1,5 +1,10 @@
 import { PrismaService } from './prisma-service/prisma.service';
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
@@ -9,6 +14,9 @@ import { AuthModule } from './auth/auth.module';
 import { LikesModule } from './likes/likes.module';
 import { TokensModule } from './tokens/tokens.module';
 import { OrdersModule } from './orders/orders.module';
+import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { TokensService } from './tokens/tokens.service';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
@@ -21,6 +29,13 @@ import { OrdersModule } from './orders/orders.module';
     OrdersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService, PrismaService, TokensService, UsersService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .exclude({ path: 'auth', method: RequestMethod.POST }, 'auth/(.*)')
+      .forRoutes('*');
+  }
+}
