@@ -10,9 +10,16 @@ import { paginationSerializer } from 'src/pagination/serializer';
 export class ProductsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, categoryId: number) {
     const product = createProductDto;
-    return await this.prismaService.product.create({ data: product });
+    return await this.prismaService.product.create({
+      data: {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        categoryId: categoryId,
+      },
+    });
   }
 
   async findAll(paginationQuery: PaginationQueryDto) {
@@ -41,12 +48,4 @@ export class ProductsService {
   async remove(id: number) {
     return this.prismaService.product.delete({ where: { id } });
   }
-
-  // async findByCategory() {
-  //   let products = this.prismaService.product;
-  //   if(!products.categoryId){
-  //     products.categoryId = 1;
-  //   }
-  //   return await products.categoryId.findMany();
-  // }
 }

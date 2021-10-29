@@ -19,26 +19,22 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post(':categoryId/products')
-  async create(@Body() createProductDto: CreateProductDto) {
-    return await this.productsService.create(createProductDto);
+  async create(
+    @Param('categoryId') categoryId: number,
+    @Body() createProductDto: CreateProductDto,
+  ) {
+    const product = await this.productsService.create(
+      createProductDto,
+      +categoryId,
+    );
+
+    return product;
   }
 
   @Get(':categoryId/products')
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
-  ) {
-    return this.productsService.findAll({
-      page,
-      perPage,
-    });
-  }
-
-  @Get(':categoryId/products')
-  async findByCategory(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
-    @Param('categoryId') categoryId: string,
   ) {
     return this.productsService.findAll({
       page,
