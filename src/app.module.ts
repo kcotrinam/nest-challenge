@@ -38,6 +38,10 @@ export class AppModule implements NestModule {
       .exclude(
         { path: 'auth', method: RequestMethod.POST },
         { path: 'categories/:categoryId/products', method: RequestMethod.GET },
+        {
+          path: 'categories/:categoryId/products/:id',
+          method: RequestMethod.GET,
+        },
         { path: 'orders', method: RequestMethod.GET },
         { path: 'categories', method: RequestMethod.GET },
         { path: 'users', method: RequestMethod.GET },
