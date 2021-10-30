@@ -15,7 +15,7 @@ export class CreateProductDto {
 
   @Expose()
   @IsString()
-  readonly image: string;
+  readonly image?: string;
 
   @Expose()
   @IsNotEmpty()

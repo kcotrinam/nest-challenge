@@ -17,6 +17,7 @@ import { OrdersModule } from './orders/orders.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { TokensService } from './tokens/tokens.service';
 import { UsersService } from './users/users.service';
+import { AttachmentService } from './attachment/attachment.service';
 
 @Module({
   imports: [
@@ -29,7 +30,13 @@ import { UsersService } from './users/users.service';
     OrdersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, TokensService, UsersService],
+  providers: [
+    AppService,
+    PrismaService,
+    TokensService,
+    UsersService,
+    AttachmentService,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
@@ -42,11 +49,15 @@ export class AppModule implements NestModule {
           method: RequestMethod.GET,
         },
         { path: 'accounts/me/orders', method: RequestMethod.GET },
-        // { path: 'accounts/:userId/orders', method: RequestMethod.GET },
+        {
+          path: 'categories/:categoryId/products/image',
+          method: RequestMethod.GET,
+        },
         { path: 'categories', method: RequestMethod.GET },
         { path: 'users', method: RequestMethod.GET },
         'accounts/me/orders/(.*)',
         'auth/(.*)',
+        'categories/:categoryId/(.*)',
       )
       .forRoutes('*');
   }

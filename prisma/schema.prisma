@@ -52,12 +52,26 @@ model Product {
 
   likes       Like[]
   orderItems  orderProduct[]
+  attachments Attachment[]
   
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("products")
 }
+
+model Attachment {
+  id          Int @id @default(autoincrement())
+  key   String
+  url String
+
+  product Product @relation(fields: [productId], references: [id])
+  productId Int @map("product_id")
+
+  @@map("attachments")
+  }
+
+
 
 model Like {
   id          Int @id @default(autoincrement())
