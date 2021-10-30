@@ -52,9 +52,5 @@ export class AttachmentService {
     } catch (e) {
       throw new HttpException(e, 500);
     }
-    // return s3.getSignedUrl('getObject', {
-    //   Bucket: process.env.AWS_BUCKET,
-    //   Key: key,
-    // });
   }
 }
