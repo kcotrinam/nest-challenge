@@ -1,17 +1,4 @@
-import { Expose, Exclude } from 'class-transformer';
-import { IsNotEmpty, IsDecimal, IsBoolean, IsOptional } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { CreateOrderDto } from './create-order.dto';
 
-@Exclude()
-export class UpdateOrderDto {
-  @Expose()
-  @IsNotEmpty()
-  @IsOptional()
-  @IsDecimal()
-  readonly total: number;
-
-  @Expose()
-  @IsNotEmpty()
-  @IsOptional()
-  @IsBoolean()
-  readonly isPaid: boolean;
-}
+export class UpdateOrderDto extends PartialType(CreateOrderDto) {}

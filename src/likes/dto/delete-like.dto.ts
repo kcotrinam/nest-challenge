@@ -8,7 +8,7 @@ export class CreateLikeDto {
   @Expose()
   @IsNotEmpty()
   @IsNumber()
-  userId: number;
+  likeId: number;
   @ApiProperty({ description: 'The product id' })
   @ApiProperty({ example: 1 })
   @Expose()
