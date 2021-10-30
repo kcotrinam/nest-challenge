@@ -10,9 +10,16 @@ import { paginationSerializer } from 'src/pagination/serializer';
 export class ProductsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, categoryId: number) {
     const product = createProductDto;
-    return await this.prismaService.product.create({ data: product });
+    return await this.prismaService.product.create({
+      data: {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        categoryId: categoryId,
+      },
+    });
   }
 
   async findAll(paginationQuery: PaginationQueryDto) {
@@ -21,6 +28,21 @@ export class ProductsService {
     const total = await this.prismaService.product.count();
     const pageInfo = paginationSerializer(total, { page, perPage });
     const products = await this.prismaService.product.findMany({
+      skip,
+      take,
+    });
+    return { pageInfo, data: products };
+  }
+
+  async findDisabled(paginationQuery: PaginationQueryDto) {
+    const { page, perPage } = paginationQuery;
+    const { skip, take } = paginatedHelper(paginationQuery);
+    const total = await this.prismaService.product.count({
+      where: { isDisabled: true },
+    });
+    const pageInfo = paginationSerializer(total, { page, perPage });
+    const products = await this.prismaService.product.findMany({
+      where: { isDisabled: true },
       skip,
       take,
     });
@@ -41,12 +63,4 @@ export class ProductsService {
   async remove(id: number) {
     return this.prismaService.product.delete({ where: { id } });
   }
-
-  // async findByCategory() {
-  //   let products = this.prismaService.product;
-  //   if(!products.categoryId){
-  //     products.categoryId = 1;
-  //   }
-  //   return await products.categoryId.findMany();
-  // }
 }

@@ -9,6 +9,9 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Query,
+  Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -19,8 +22,19 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  async create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoriesService.create(createCategoryDto);
+  async create(@Body() createCategoryDto: CreateCategoryDto, @Req() req) {
+    const currentUser = req.currentUserRole;
+    if (currentUser) {
+      return this.categoriesService.create(createCategoryDto);
+    } else {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          error: 'ONLY MANAGERS CAN CREATE A NEW CATEGORY',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
   }
 
   @Get()
@@ -43,12 +57,35 @@ export class CategoriesController {
   update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
+    @Req() req,
   ) {
-    return this.categoriesService.update(+id, updateCategoryDto);
+    const currentUser = req.currentUserRole;
+    if (currentUser) {
+      return this.categoriesService.update(+id, updateCategoryDto);
+    } else {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          error: 'ONLY MANAGERS CAN UPDATE A CATEGORY',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
+  remove(@Param('id') id: string, @Req() req) {
+    const currentUser = req.currentUserRole;
+    if (currentUser) {
+      return this.categoriesService.remove(+id);
+    } else {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          error: 'ONLY MANAGERS CAN DELETE A CATEGORY',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
   }
 }

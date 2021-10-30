@@ -1,7 +1,6 @@
 import { Expose, Exclude } from 'class-transformer';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 import { BaseDto } from '../base.dto';
-// import { BaseDto } from '../../base.dto';
 
 @Exclude()
 export class CreateUserDto extends BaseDto {

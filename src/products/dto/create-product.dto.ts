@@ -26,4 +26,7 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsNumber()
   readonly price: number;
+
+  @Expose()
+  readonly categoryId: number;
 }
