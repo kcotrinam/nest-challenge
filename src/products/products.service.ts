@@ -34,6 +34,21 @@ export class ProductsService {
     return { pageInfo, data: products };
   }
 
+  async findDisabled(paginationQuery: PaginationQueryDto) {
+    const { page, perPage } = paginationQuery;
+    const { skip, take } = paginatedHelper(paginationQuery);
+    const total = await this.prismaService.product.count({
+      where: { isDisabled: true },
+    });
+    const pageInfo = paginationSerializer(total, { page, perPage });
+    const products = await this.prismaService.product.findMany({
+      where: { isDisabled: true },
+      skip,
+      take,
+    });
+    return { pageInfo, data: products };
+  }
+
   async findOne(id: number) {
     return await this.prismaService.product.findUnique({ where: { id } });
   }
