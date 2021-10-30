@@ -41,4 +41,12 @@ export class ProductsService {
   async remove(id: number) {
     return this.prismaService.product.delete({ where: { id } });
   }
+
+  // async findByCategory() {
+  //   let products = this.prismaService.product;
+  //   if(!products.categoryId){
+  //     products.categoryId = 1;
+  //   }
+  //   return await products.categoryId.findMany();
+  // }
 }
