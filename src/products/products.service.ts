@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma-service/prisma.service';
 import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from 'src/pagination/pagination.helper';
 import { paginationSerializer } from 'src/pagination/serializer';
+import { AttachmentService } from 'src/attachment/attachment.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly attachmentService: AttachmentService,
+  ) {}
 
   async create(createProductDto: CreateProductDto, categoryId: number) {
     const product = createProductDto;
@@ -62,5 +66,31 @@ export class ProductsService {
 
   async remove(id: number) {
     return this.prismaService.product.delete({ where: { id } });
+  }
+
+  async uploadImage(
+    buffer: Buffer,
+    fileName: string,
+    userRole: boolean,
+    productId: number,
+  ) {
+    if (!userRole) throw new HttpException('Unauthorized', 401);
+
+    const uploadedImage: any = await this.attachmentService.uploadFile(
+      buffer,
+      fileName,
+    );
+
+    this.prismaService.attachment.create({
+      data: {
+        url: uploadedImage.Location,
+        key: uploadedImage.Key,
+        product: {
+          connect: {
+            id: productId,
+          },
+        },
+      },
+    });
   }
 }

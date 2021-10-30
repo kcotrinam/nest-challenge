@@ -129,10 +129,20 @@ export class ProductsController {
     }
   }
 
-  @Post('products/image')
+  @Post(':categoryId/products/:id/image')
   @UseInterceptors(FileInterceptor('file'))
-  addImage(@Req() req, @UploadedFile() file, @Res() res) {
-    this.attachmentService.uploadFile(file.buffer, file.originalname);
+  addImage(
+    @Param('id') id: string,
+    @UploadedFile() file,
+    @Req() req,
+    @Res() res,
+  ) {
+    this.productsService.uploadImage(
+      file.buffer,
+      file.originalname,
+      req.currentUserRole,
+      +id,
+    );
 
     res.status(200).send('ok');
   }
