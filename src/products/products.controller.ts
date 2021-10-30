@@ -146,4 +146,9 @@ export class ProductsController {
 
     res.status(200).send('ok');
   }
+
+  @Get(':categoryId/products/:id/images')
+  async getImages(@Param('id') id: string) {
+    return this.productsService.findImages(+id);
+  }
 }

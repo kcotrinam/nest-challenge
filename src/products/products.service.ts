@@ -6,6 +6,7 @@ import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from 'src/pagination/pagination.helper';
 import { paginationSerializer } from 'src/pagination/serializer';
 import { AttachmentService } from 'src/attachment/attachment.service';
+import { S3 } from 'aws-sdk';
 
 @Injectable()
 export class ProductsService {
@@ -92,5 +93,31 @@ export class ProductsService {
         },
       },
     });
+  }
+
+  async deleteImage(id: number) {
+    const attachment = await this.prismaService.attachment.findUnique({
+      where: { id },
+    });
+    await this.attachmentService.deleteFile(+attachment.id);
+    return this.prismaService.attachment.delete({ where: { id } });
+  }
+
+  async findImages(productId: number) {
+    const images = await this.prismaService.attachment.findMany({
+      where: { productId },
+    });
+
+    return Promise.all(
+      images.map(async (image) => {
+        const url = await this.attachmentService.generatePresignedUrl(
+          image.key,
+        );
+        return {
+          ...image,
+          url,
+        };
+      }),
+    );
   }
 }
