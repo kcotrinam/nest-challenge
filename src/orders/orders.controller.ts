@@ -12,10 +12,12 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { plainToClass } from 'class-transformer';
 import { CreateOrderDto } from './dto/request/create-order.dto';
 import { OrdersService } from './orders.service';
 
+@ApiTags('orders')
 @Controller()
 export class OrdersController {
   constructor(private readonly orderService: OrdersService) {}

@@ -1,7 +1,9 @@
 import { Controller, Post, Body, Param, Delete } from '@nestjs/common';
 import { LikesService } from './likes.service';
 import { CreateLikeDto } from './dto/create-like.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('likes')
 @Controller('products/:productId')
 export class LikesController {
   constructor(private readonly likes: LikesService) {}
