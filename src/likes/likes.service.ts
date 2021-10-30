@@ -26,7 +26,17 @@ export class LikesService {
     }
   }
 
-  async remove(id: number) {
-    return await this.prisma.like.delete({ where: { id } });
+  async remove(id: number, userId: number) {
+    if (!userId) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNAUTHORIZED,
+          error: 'You cant like this product',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    } else {
+      return await this.prisma.like.delete({ where: { id } });
+    }
   }
 }

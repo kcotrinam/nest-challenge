@@ -12,7 +12,7 @@ export class LikesController {
   }
 
   @Delete('/:productId/likes/:id')
-  async remove(@Param('id') id: string) {
-    return await this.likes.remove(+id);
+  async remove(@Param('id') id: string, @Req() req) {
+    return await this.likes.remove(+id, +req.currentUser);
   }
 }
