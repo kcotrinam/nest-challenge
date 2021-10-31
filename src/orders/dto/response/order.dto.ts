@@ -10,4 +10,7 @@ export class OrderDto {
 
   @Expose()
   isPaid: boolean;
+
+  @Expose()
+  userId: number;
 }

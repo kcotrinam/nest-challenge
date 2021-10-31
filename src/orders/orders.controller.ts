@@ -26,6 +26,7 @@ export class OrdersController {
     @Res() res,
     @Req() req,
   ) {
+    // console.log(req.currentUser);
     const orders = await this.orderService.findOwnOrders(
       {
         page,
@@ -58,32 +59,38 @@ export class OrdersController {
     res.status(200).json(orders);
   }
 
-  @Post()
+  @Post('accounts/me/orders')
   async create(@Req() req, @Body() orderInfo, @Res() res) {
     const dto = plainToClass(CreateOrderDto, orderInfo);
-    const order = await this.orderService.create(+req.currentUser, dto);
+    const newOrder = await this.orderService.create(+req.currentUser, dto);
 
-    return res.status(201).json(order);
+    return res.status(201).json(newOrder);
   }
 
-  @Get('/:id')
+  @Get('orders/:id')
   async findOne(@Param('id') id: string, @Res() res) {
     const order = await this.orderService.findOne(+id);
 
     return res.status(200).json(order);
   }
 
-  @Patch('/:id')
-  async update(@Param('id') id: string, @Body() orderInfo, @Res() res) {
+  @Patch('accounts/me/orders/:id')
+  async update(
+    @Param('id') id: string,
+    @Req() req,
+    @Body() orderInfo,
+    @Res() res,
+  ) {
+    const loggedUser = req.currentUser;
     const dto = plainToClass(CreateOrderDto, orderInfo);
-    const order = await this.orderService.update(+id, dto);
+    const order = await this.orderService.update(+id, loggedUser, dto);
 
     return res.status(200).json(order);
   }
 
-  @Delete('/:id')
-  async delete(@Param('id') id: string, @Res() res) {
-    await this.orderService.delete(+id);
+  @Delete('accounts/me/orders/:id')
+  async delete(@Param('id') id: string, @Req() req, @Res() res) {
+    await this.orderService.delete(+id, req.currentUser);
 
     return res.status(204).json();
   }

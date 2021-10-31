@@ -15,6 +15,11 @@ export class CreateUserDto extends BaseDto {
   readonly lastname: string;
 
   @Expose()
+  @IsNotEmpty()
+  @IsString()
+  readonly isManager?: boolean;
+
+  @Expose()
   @IsString()
   readonly email: string;
 

@@ -21,14 +21,12 @@ export class OrdersService {
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
 
-    if (!userRole)
+    if (!userRole) {
       throw new HttpException(
-        errorMessage(
-          HttpStatus.FORBIDDEN,
-          'You are not authorized to view this page',
-        ),
+        errorMessage(HttpStatus.FORBIDDEN, 'YOU ARE NOT AUTHORIZED'),
         HttpStatus.FORBIDDEN,
       );
+    }
 
     const total = await this.prisma.order.count();
     const orders = await this.prisma.order.findMany({
@@ -41,7 +39,7 @@ export class OrdersService {
 
     const pageInfo = paginationSerializer(total, { page, perPage });
 
-    return { pageInfo, data: orders };
+    return { pageInfo, data: plainToClass(OrderDto, orders) };
   }
 
   async findOwnOrders(paginationQuery: PaginationQueryDto, userId: number) {
@@ -59,7 +57,7 @@ export class OrdersService {
 
     const pageInfo = paginationSerializer(total, { page, perPage });
 
-    return { pageInfo, data: orders };
+    return { pageInfo, data: plainToClass(OrderDto, orders) };
   }
 
   async create(userId: number, order: CreateOrderDto): Promise<OrderDto> {
@@ -83,16 +81,48 @@ export class OrdersService {
     return plainToClass(OrderDto, order);
   }
 
-  async update(id: number, order: UpdateOrderDto): Promise<OrderDto> {
+  async update(
+    id: number,
+    currentUser: number,
+    input: UpdateOrderDto,
+  ): Promise<OrderDto> {
+    const order = await this.prisma.order.count({
+      where: {
+        id,
+        userId: currentUser,
+      },
+    });
+
+    if (!order) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_FOUND, 'ORDER NOT FOUND'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     const updatedOrder = await this.prisma.order.update({
       where: { id },
-      data: order,
+      data: input,
     });
 
     return plainToClass(OrderDto, updatedOrder);
   }
 
-  async delete(id: number): Promise<void> {
-    await this.prisma.order.delete({ where: { id } });
+  async delete(id: number, userId: number): Promise<void> {
+    const order = await this.prisma.order.count({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!order) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_FOUND, 'ORDER NOT FOUND'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    this.prisma.order.delete({ where: { id } });
   }
 }
