@@ -12,6 +12,7 @@ import {
   Req,
   HttpException,
   HttpStatus,
+  Res,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -21,71 +22,55 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Post()
-  async create(@Body() createCategoryDto: CreateCategoryDto, @Req() req) {
-    const currentUser = req.currentUserRole;
-    if (currentUser) {
-      return this.categoriesService.create(createCategoryDto);
-    } else {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          error: 'ONLY MANAGERS CAN CREATE A NEW CATEGORY',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-  }
-
   @Get()
   async findAll(
-    @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
+    @Req() req,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('perPage', new DefaultValuePipe(20), ParseIntPipe) perPage: number,
   ) {
-    return await this.categoriesService.findAll({
+    return await this.categoriesService.findAll(req.currentUserRole, {
       page,
       perPage,
     });
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
+  findOne(@Param('id') id: string, @Req() req) {
+    return this.categoriesService.findOne(+id, req.currentUserRole);
+  }
+
+  @Post()
+  async create(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @Req() req,
+    @Res() res,
+  ) {
+    const newCategory = await this.categoriesService.create(
+      createCategoryDto,
+      req.currentUserRole,
+    );
+
+    res.status(200).json(newCategory);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
     @Req() req,
+    @Res() res,
   ) {
-    const currentUser = req.currentUserRole;
-    if (currentUser) {
-      return this.categoriesService.update(+id, updateCategoryDto);
-    } else {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          error: 'ONLY MANAGERS CAN UPDATE A CATEGORY',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
+    const updatedCategory = await this.categoriesService.update(
+      +id,
+      req.currentUserRole,
+      updateCategoryDto,
+    );
+
+    res.status(200).json(updatedCategory);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Req() req) {
-    const currentUser = req.currentUserRole;
-    if (currentUser) {
-      return this.categoriesService.remove(+id);
-    } else {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          error: 'ONLY MANAGERS CAN DELETE A CATEGORY',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
+  remove(@Param('id') id: string, @Req() req): void {
+    this.categoriesService.remove(+id, req.currentUserRole);
   }
 }
