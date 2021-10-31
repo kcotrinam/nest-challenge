@@ -22,114 +22,97 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AttachmentService } from 'src/attachment/attachment.service';
 
-@Controller('categories')
+@Controller()
 export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
     private readonly attachmentService: AttachmentService,
   ) {}
 
-  @Post(':categoryId/products')
+  @Post('categories/:categoryId/products')
   async create(
     @Param('categoryId') categoryId: number,
     @Body() createProductDto: CreateProductDto,
     @Req() req,
+    @Res() res,
   ) {
-    const currentUser = req.currentUserRole;
-    if (currentUser) {
-      const product = await this.productsService.create(
-        createProductDto,
-        +categoryId,
-      );
+    const product = await this.productsService.create(
+      createProductDto,
+      +categoryId,
+      req.currentUserRole,
+    );
 
-      return product;
-    } else {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          error: 'ONLY MANAGERS CAN CREATE A NEW PRODUCT',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
+    res.status(201).json(product);
   }
 
-  @Get(':categoryId/products')
+  @Get('products')
   async findAll(
+    @Res() res,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
+    @Query('perPage', new DefaultValuePipe(10), ParseIntPipe) perPage: number,
   ) {
-    return this.productsService.findAll({
+    const products = await this.productsService.findAll({
       page,
       perPage,
     });
+
+    res.status(200).json(products);
   }
 
-  @Get(':categoryId/disabledProducts')
+  @Get('categories/:categoryId/disabledProducts')
   async findDisabled(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
     @Req() req,
   ) {
-    const currentUser = req.currentUserRole;
-    if (currentUser) {
-      return this.productsService.findDisabled({
+    return this.productsService.findDisabled(
+      {
         page,
         perPage,
-      });
-    } else {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          error: 'ONLY MANAGERS CAN SEE THE LIST OF DISABLED PRODUCTS',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
+      },
+      req.currentUserRole,
+    );
   }
 
-  @Get(':categoryId/products/:id')
+  @Get('products/:id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(+id);
   }
 
-  @Patch(':categoryId/products/:id')
-  update(
+  @Patch('products/:id')
+  async update(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
     @Req() req,
+    @Res() res,
   ) {
-    const currentUser = req.currentUserRole;
-    if (currentUser) {
-      return this.productsService.update(+id, updateProductDto);
-    } else {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          error: 'ONLY MANAGERS CAN UPDATE A PRODUCT',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
+    const product = await this.productsService.update(
+      +id,
+      updateProductDto,
+      req.currentUserRole,
+    );
+
+    res.status(200).json(product);
   }
 
-  @Delete(':categoryId/products/:id')
-  remove(@Param('id') id: string, @Req() req) {
-    const currentUser = req.currentUserRole;
-    if (currentUser) {
-      return this.productsService.remove(+id);
-    } else {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          error: 'ONLY MANAGERS CAN DELETE A PRODUCT',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
+  @Patch('products/:id/switch-availabilty')
+  async switchAvailability(@Req() req, @Param('id') id: string, @Res() res) {
+    const product = await this.productsService.switchAvailability(
+      +id,
+      req.currentUserRole,
+    );
+
+    res.status(200).json(product);
   }
 
-  @Post(':categoryId/products/:id/image')
+  @Delete('products/:id')
+  async remove(@Param('id') id: string, @Req() req, @Res() res): Promise<void> {
+    await this.productsService.remove(+id, req.currentUserRole);
+
+    res.status(200).send('OK');
+  }
+
+  @Post('categories/:categoryId/products/:id/image')
   @UseInterceptors(FileInterceptor('file'))
   addImage(
     @Param('id') id: string,
@@ -147,7 +130,7 @@ export class ProductsController {
     res.status(200).send('ok');
   }
 
-  @Get(':categoryId/products/:id/images')
+  @Get('categories/:categoryId/products/:id/images')
   async getImages(@Param('id') id: string) {
     return this.productsService.findImages(+id);
   }

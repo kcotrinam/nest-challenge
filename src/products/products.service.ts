@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma-service/prisma.service';
@@ -6,7 +6,10 @@ import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from 'src/pagination/pagination.helper';
 import { paginationSerializer } from 'src/pagination/serializer';
 import { AttachmentService } from 'src/attachment/attachment.service';
-import { S3 } from 'aws-sdk';
+import { plainToClass } from 'class-transformer';
+import { ProductDto } from './dto/product.dto';
+import { DetailedProductDto } from './dto/detailed-product.dto';
+import { errorMessage } from 'src/utils/error-message-constructor';
 
 @Injectable()
 export class ProductsService {
@@ -15,16 +18,31 @@ export class ProductsService {
     private readonly attachmentService: AttachmentService,
   ) {}
 
-  async create(createProductDto: CreateProductDto, categoryId: number) {
-    const product = createProductDto;
-    return await this.prismaService.product.create({
+  async create(
+    input: CreateProductDto,
+    categoryId: number,
+    isManager: boolean,
+  ) {
+    if (!isManager) {
+      throw new HttpException(
+        errorMessage(
+          HttpStatus.FORBIDDEN,
+          'ONLY MANAGERS CAN CREATE A NEW PRODUCT',
+        ),
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const newProduct = await this.prismaService.product.create({
       data: {
-        name: product.name,
-        description: product.description,
-        price: product.price,
+        name: input.name,
+        description: input.description,
+        price: input.price,
         categoryId: categoryId,
       },
     });
+
+    return plainToClass(DetailedProductDto, newProduct);
   }
 
   async findAll(paginationQuery: PaginationQueryDto) {
@@ -32,41 +50,128 @@ export class ProductsService {
     const { skip, take } = paginatedHelper(paginationQuery);
     const total = await this.prismaService.product.count();
     const pageInfo = paginationSerializer(total, { page, perPage });
+
     const products = await this.prismaService.product.findMany({
       skip,
       take,
     });
-    return { pageInfo, data: products };
+
+    return { pageInfo, data: plainToClass(ProductDto, products) };
   }
 
-  async findDisabled(paginationQuery: PaginationQueryDto) {
+  async findDisabled(paginationQuery: PaginationQueryDto, isManager: boolean) {
+    if (!isManager) {
+      throw new HttpException(
+        errorMessage(
+          HttpStatus.FORBIDDEN,
+          'ONLY MANAGERS CAN VIEW DISABLED PRODUCTS',
+        ),
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
     const total = await this.prismaService.product.count({
       where: { isDisabled: true },
     });
     const pageInfo = paginationSerializer(total, { page, perPage });
+
     const products = await this.prismaService.product.findMany({
       where: { isDisabled: true },
       skip,
       take,
     });
-    return { pageInfo, data: products };
+    return { pageInfo, data: plainToClass(DetailedProductDto, products) };
   }
 
   async findOne(id: number) {
-    return await this.prismaService.product.findUnique({ where: { id } });
+    const product = await this.prismaService.product.findUnique({
+      where: { id },
+    });
+
+    if (!product) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_FOUND, 'PRODUCT NOT FOUND'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return plainToClass(DetailedProductDto, product);
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
-    return await this.prismaService.product.update({
+  async update(
+    id: number,
+    updateProductDto: UpdateProductDto,
+    isManager: boolean,
+  ): Promise<{ data: DetailedProductDto }> {
+    if (!isManager) {
+      throw new HttpException(
+        errorMessage(
+          HttpStatus.FORBIDDEN,
+          'ONLY MANAGERS CAN VIEW DISABLED PRODUCTS',
+        ),
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const updatedProduct = await this.prismaService.product.update({
       where: { id },
       data: updateProductDto,
     });
+
+    return { data: plainToClass(DetailedProductDto, updatedProduct) };
   }
 
-  async remove(id: number) {
-    return this.prismaService.product.delete({ where: { id } });
+  async remove(id: number, isManager: boolean): Promise<void> {
+    if (!isManager) {
+      throw new HttpException(
+        errorMessage(
+          HttpStatus.FORBIDDEN,
+          'ONLY MANAGERS CAN VIEW DISABLED PRODUCTS',
+        ),
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    try {
+      await this.prismaService.product.delete({ where: { id } });
+    } catch (error) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_FOUND, 'PRODUCT NOT FOUND'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  async switchAvailability(id: number, isManager: boolean) {
+    if (!isManager) {
+      throw new HttpException(
+        errorMessage(
+          HttpStatus.FORBIDDEN,
+          'ONLY MANAGERS CAN VIEW DISABLED PRODUCTS',
+        ),
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const product = await this.prismaService.product.findUnique({
+      where: { id },
+    });
+
+    if (!product) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_FOUND, 'PRODUCT NOT FOUND'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const updatedProduct = await this.prismaService.product.update({
+      where: { id },
+      data: { isDisabled: !product.isDisabled },
+    });
+
+    return plainToClass(DetailedProductDto, updatedProduct);
   }
 
   async uploadImage(
