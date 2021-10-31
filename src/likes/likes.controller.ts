@@ -1,18 +1,17 @@
-import { Controller, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Param, Delete, Req } from '@nestjs/common';
 import { LikesService } from './likes.service';
-import { CreateLikeDto } from './dto/create-like.dto';
 
-@Controller('products/:productId')
+@Controller()
 export class LikesController {
   constructor(private readonly likes: LikesService) {}
 
-  @Post('/likes')
-  async create(@Body() createLikeDto: CreateLikeDto) {
-    return await this.likes.create(createLikeDto);
+  @Post('products/:id/like')
+  async create(@Req() req, @Param('id') id: string) {
+    await this.likes.create(+id, req.currentUser);
   }
 
-  @Delete('likes/:id')
-  async remove(@Param('id') id: string) {
-    return await this.likes.remove(+id);
+  @Delete('products/:id/unlike')
+  async remove(@Param('id') id: string, @Req() req) {
+    return await this.likes.remove(+id, req.currentUser);
   }
 }

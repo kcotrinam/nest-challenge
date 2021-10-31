@@ -123,6 +123,24 @@ export class ProductsService {
     return { data: plainToClass(DetailedProductDto, updatedProduct) };
   }
 
+  async updateLikes(id: number, action: string): Promise<void> {
+    const product = await this.prismaService.product.findUnique({
+      where: { id },
+    });
+
+    if (action === 'increase') {
+      await this.prismaService.product.update({
+        where: { id },
+        data: { likeCounter: product.likeCounter + 1 },
+      });
+    } else {
+      await this.prismaService.product.update({
+        where: { id },
+        data: { likeCounter: product.likeCounter - 1 },
+      });
+    }
+  }
+
   async remove(id: number, isManager: boolean): Promise<void> {
     if (!isManager) {
       throw new HttpException(

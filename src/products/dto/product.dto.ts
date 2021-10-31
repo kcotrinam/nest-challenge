@@ -6,6 +6,8 @@ export class ProductDto {
   readonly id: number;
 
   @Expose()
+  readonly likeCounter: number;
+  @Expose()
   readonly name: string;
 
   @Expose()
