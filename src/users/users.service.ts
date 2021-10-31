@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { PrismaService } from 'src/prisma-service/prisma.service';
 import { UserDto } from './dtos/response/user.dto';
@@ -6,6 +6,7 @@ import createError from 'http-errors';
 import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from 'src/pagination/pagination.helper';
 import { paginationSerializer } from 'src/pagination/serializer';
+import { errorMessage } from 'src/utils/error-message-constructor';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +21,7 @@ export class UsersService {
       skip,
       take,
     });
-    return { pageInfo, data: users };
+    return { data: plainToClass(UserDto, users), pageInfo };
   }
 
   async findOne(id: number): Promise<UserDto> {
@@ -33,5 +34,34 @@ export class UsersService {
     }
 
     return plainToClass(UserDto, user);
+  }
+
+  async switchRole(id: number, userRole: boolean): Promise<UserDto> {
+    if (!userRole) {
+      throw new HttpException(
+        errorMessage(HttpStatus.UNAUTHORIZED, 'NOT AUTHORIZED'),
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_FOUND, 'USER NOT FOUND'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const newRole = user.isManager ? false : true;
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: { isManager: newRole },
+    });
+
+    return plainToClass(UserDto, updatedUser);
   }
 }

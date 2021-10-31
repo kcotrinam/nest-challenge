@@ -9,6 +9,12 @@ export class UserDto {
   name: string;
 
   @Expose()
+  emailVerifiedAt: string;
+
+  @Expose()
+  emailVerificationToken: string;
+
+  @Expose()
   isManager: boolean;
 
   @Expose()

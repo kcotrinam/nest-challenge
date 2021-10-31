@@ -4,7 +4,9 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Query,
+  Req,
   Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -17,16 +19,27 @@ export class UsersController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
+    @Res() res,
   ) {
-    return await this.usersService.findAll({
+    const users = await this.usersService.findAll({
       page,
       perPage,
     });
+
+    res.status(200).json(users);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res) {
     const user = await this.usersService.findOne(+id);
+
+    res.status(200).json(user);
+  }
+
+  @Patch(':id/switch-role')
+  async update(@Param('id') id: string, @Res() res, @Req() req) {
+    // console.log(req.currentUserRole);
+    const user = await this.usersService.switchRole(+id, req.currentUserRole);
 
     res.status(200).json(user);
   }
