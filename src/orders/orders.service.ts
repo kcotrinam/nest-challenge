@@ -122,7 +122,8 @@ export class OrdersService {
         HttpStatus.NOT_FOUND,
       );
     }
+    console.log(order);
 
-    this.prisma.order.delete({ where: { id } });
+    await this.prisma.order.delete({ where: { id } });
   }
 }

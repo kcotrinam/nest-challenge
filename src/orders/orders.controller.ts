@@ -22,7 +22,7 @@ export class OrdersController {
   @Get('accounts/me/orders')
   async findOwnOrders(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
+    @Query('perPage', new DefaultValuePipe(20), ParseIntPipe) perPage: number,
     @Res() res,
     @Req() req,
   ) {
@@ -41,7 +41,7 @@ export class OrdersController {
   @Get('accounts/:userId/orders')
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
+    @Query('perPage', new DefaultValuePipe(20), ParseIntPipe) perPage: number,
     @Res() res,
     @Req() req,
     @Param('userId') userId: string,

@@ -39,8 +39,8 @@ export class CategoriesController {
 
   @Get()
   async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('perPage', new DefaultValuePipe(2), ParseIntPipe) perPage: number,
+    @Query('page', new DefaultValuePipe(0), ParseIntPipe) page: number,
+    @Query('perPage', new DefaultValuePipe(20), ParseIntPipe) perPage: number,
   ) {
     return await this.categoriesService.findAll({
       page,
