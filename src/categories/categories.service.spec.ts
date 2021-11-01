@@ -32,7 +32,12 @@ describe('CategoriesService', () => {
   });
 
   it('should create a category', async () => {
-    const category = await categoriesService.create({ name: 'choclatey' });
+    const category = await categoriesService.create(
+      {
+        name: 'choclatey',
+      },
+      true,
+    );
     expect(category).toHaveProperty('id');
     expect(category).toHaveProperty('name');
   });
