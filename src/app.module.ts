@@ -20,6 +20,7 @@ import { UsersService } from './users/users.service';
 import { AttachmentService } from './attachment/attachment.service';
 import { OrderProductsModule } from './order-products/order-products.module';
 import { OrderProductsService } from './order-products/order-products.service';
+import { PrismaModule } from './prisma-service/prisma.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { OrderProductsService } from './order-products/order-products.service';
     TokensModule,
     OrdersModule,
     OrderProductsModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [
