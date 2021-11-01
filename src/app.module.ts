@@ -17,6 +17,7 @@ import { OrdersModule } from './orders/orders.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { TokensService } from './tokens/tokens.service';
 import { UsersService } from './users/users.service';
+import { PrismaModule } from './prisma-service/prisma.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { UsersService } from './users/users.service';
     LikesModule,
     TokensModule,
     OrdersModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, TokensService, UsersService],
