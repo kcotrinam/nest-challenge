@@ -2,9 +2,8 @@ import { PrismaService } from './prisma-service/prisma.service';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { config, ConfigService } from 'aws-sdk';
-
-// dotenv.config();
+import { config } from 'aws-sdk';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,6 +21,16 @@ async function bootstrap() {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: process.env.AWS_REGION,
   });
+
+  const options = new DocumentBuilder()
+    .setTitle('Nestjs Challenge')
+    .setDescription('Store application')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(3000);
 }
 bootstrap();

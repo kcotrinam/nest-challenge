@@ -10,7 +10,9 @@ import {
 import { plainToClass } from 'class-transformer';
 import { CreateOrderProductDto } from 'src/order-products/dto/create-order-product.dto';
 import { OrderProductsService } from './order-products.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Orders-Products')
 @Controller('orders/:orderId/products/:productId/chart')
 export class OrderProductsController {
   constructor(private readonly orderProductService: OrderProductsService) {}
