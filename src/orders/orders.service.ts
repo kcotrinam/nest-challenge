@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
-import { paginatedHelper } from 'src/pagination/pagination.helper';
-import { paginationSerializer } from 'src/pagination/serializer';
-import { PrismaService } from 'src/prisma-service/prisma.service';
-import { errorMessage } from 'src/utils/error-message-constructor';
+import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
+import { paginatedHelper } from '../pagination/pagination.helper';
+import { paginationSerializer } from '../pagination/serializer';
+import { PrismaService } from '../prisma-service/prisma.service';
+import { errorMessage } from '../utils/error-message-constructor';
 import { CreateOrderDto } from './dto/request/create-order.dto';
 import { UpdateOrderDto } from './dto/request/update-order.dto';
 import { OrderDto } from './dto/response/order.dto';

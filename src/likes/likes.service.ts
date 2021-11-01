@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma-service/prisma.service';
-import { errorMessage } from 'src/utils/error-message-constructor';
-import { ProductsService } from 'src/products/products.service';
+import { PrismaService } from '../prisma-service/prisma.service';
+import { errorMessage } from '../utils/error-message-constructor';
+import { ProductsService } from '../products/products.service';
 
 @Injectable()
 export class LikesService {

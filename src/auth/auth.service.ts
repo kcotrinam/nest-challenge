@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma-service/prisma.service';
+import { PrismaService } from '../prisma-service/prisma.service';
 import { CreateUserDto } from '../users/dtos/request/create-user.dto';
 import bcrypt = require('bcrypt');
 import crypto = require('crypto');
 import createError from 'http-errors';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from 'src/users/dtos/response/user.dto';
+import { UserDto } from '../users/dtos/response/user.dto';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
 import { SignInDto } from './sign-in.dto';
-import { TokensService } from 'src/tokens/tokens.service';
+import { TokensService } from '../tokens/tokens.service';
 
 interface signInResponse {
   user: UserDto;

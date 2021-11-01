@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { OrdersService } from 'src/orders/orders.service';
-import { PrismaService } from 'src/prisma-service/prisma.service';
-import { ProductsService } from 'src/products/products.service';
-import { errorMessage } from 'src/utils/error-message-constructor';
+import { OrdersService } from '../orders/orders.service';
+import { PrismaService } from '../prisma-service/prisma.service';
+import { ProductsService } from '../products/products.service';
+import { errorMessage } from '../utils/error-message-constructor';
 import { CreateOrderProductDto } from './dto/create-order-product.dto';
 
 @Injectable()

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma-service/prisma.service';
+import { PrismaService } from '../prisma-service/prisma.service';
 import jwt = require('jsonwebtoken');
 import createError from 'http-errors';
 

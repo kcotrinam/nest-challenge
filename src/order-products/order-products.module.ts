@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { OrderProductsService } from './order-products.service';
 import { OrderProductsController } from './order-products.controller';
-import { PrismaService } from 'src/prisma-service/prisma.service';
-import { OrdersService } from 'src/orders/orders.service';
-import { ProductsService } from 'src/products/products.service';
-import { AttachmentService } from 'src/attachment/attachment.service';
+import { PrismaService } from '../prisma-service/prisma.service';
+import { OrdersService } from '../orders/orders.service';
+import { ProductsService } from '../products/products.service';
+import { AttachmentService } from '../attachment/attachment.service';
 
 @Module({
   controllers: [OrderProductsController],

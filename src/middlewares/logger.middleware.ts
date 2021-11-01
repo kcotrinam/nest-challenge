@@ -5,8 +5,8 @@ import {
   NestMiddleware,
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { TokensService } from 'src/tokens/tokens.service';
-import { UsersService } from 'src/users/users.service';
+import { TokensService } from '../tokens/tokens.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
