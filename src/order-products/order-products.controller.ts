@@ -8,7 +8,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { CreateOrderProductDto } from 'src/order-products/dto/create-order-product.dto';
+import { CreateOrderProductDto } from '../order-products/dto/create-order-product.dto';
 import { OrderProductsService } from './order-products.service';
 import { ApiTags } from '@nestjs/swagger';
 

@@ -1,15 +1,23 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+<<<<<<< HEAD
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from 'src/pagination/pagination.helper';
 import { paginationSerializer } from 'src/pagination/serializer';
 import { AttachmentService } from 'src/attachment/attachment.service';
+=======
+import { PrismaService } from '../prisma-service/prisma.service';
+import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
+import { paginatedHelper } from '../pagination/pagination.helper';
+import { paginationSerializer } from '../pagination/serializer';
+import { AttachmentService } from '../attachment/attachment.service';
+>>>>>>> categories_test
 import { plainToClass } from 'class-transformer';
 import { ProductDto } from './dto/product.dto';
 import { DetailedProductDto } from './dto/detailed-product.dto';
-import { errorMessage } from 'src/utils/error-message-constructor';
+import { errorMessage } from '../utils/error-message-constructor';
 
 @Injectable()
 export class ProductsService {

@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { errorMessage } from 'src/utils/error-message-constructor';
+import { errorMessage } from '../utils/error-message-constructor';
 import { plainToClass } from 'class-transformer';
 import { CategoryDto } from './dto/category.dto';
 import { PrismaService } from '../prisma/prisma.service';
