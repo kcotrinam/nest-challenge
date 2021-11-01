@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma-service/prisma.service';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from '../users/dtos/request/create-user.dto';
 import bcrypt = require('bcrypt');
 import crypto = require('crypto');
 import createError from 'http-errors';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from 'src/users/dtos/response/user.dto';
+import { UserDto } from '../users/dtos/response/user.dto';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
 import { SignInDto } from './sign-in.dto';
-import { TokensService } from 'src/tokens/tokens.service';
+import { TokensService } from '../tokens/tokens.service';
+import { errorMessage } from '../utils/error-message-constructor';
 
 interface signInResponse {
   user: UserDto;
@@ -28,7 +29,10 @@ export class AuthService {
         where: { email: input.email },
       })
     ) {
-      throw new createError.UnprocessableEntity('email already taken');
+      throw new HttpException(
+        errorMessage(HttpStatus.UNPROCESSABLE_ENTITY, 'E-mail already taken'),
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     const hashedPassword = await bcrypt.hash(input.password, 10);
@@ -51,33 +55,57 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user) throw createError(401, 'Wrong credentials provided');
+    if (!user) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_FOUND, 'WRONG CREDENTIAL PROVIDED'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     const IsPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!IsPasswordValid) throw createError(401, 'Wrong credentials provided');
+    if (!IsPasswordValid) {
+      throw new HttpException(
+        errorMessage(
+          HttpStatus.UNPROCESSABLE_ENTITY,
+          'WRONG CREDENTIAL PROVIDED',
+        ),
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
 
     const token = await this.tokenService.createToken(user.id);
 
     return { token, user: plainToClass(UserDto, user) };
   }
 
-  async verifyEmail(input: VerifyEmailDto): Promise<void> {
+  async verifyEmail(input: VerifyEmailDto): Promise<UserDto> {
     const user = await this.prisma.user.findUnique({
       where: { id: +input.id },
     });
 
-    if (!user) throw createError(404, 'User not found');
-    if (user.emailVerificationToken !== input.token) {
-      throw createError(400, 'Invalid token');
+    if (!user) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_FOUND, 'USER NOT FOUND'),
+        HttpStatus.NOT_FOUND,
+      );
     }
 
-    await this.prisma.user.update({
+    if (user.emailVerificationToken !== input.token) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_ACCEPTABLE, 'INVALID TOKEN'),
+        HttpStatus.NOT_ACCEPTABLE,
+      );
+    }
+
+    const verifiedUser = await this.prisma.user.update({
       where: { id: +input.id },
       data: {
         emailVerificationToken: null,
         emailVerifiedAt: new Date(),
       },
     });
+
+    return plainToClass(UserDto, verifiedUser);
   }
 }

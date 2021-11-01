@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma-service/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { errorMessage } from 'src/utils/error-message-constructor';
 import { ProductsService } from 'src/products/products.service';
 
