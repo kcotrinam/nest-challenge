@@ -26,7 +26,6 @@ export class OrdersController {
     @Res() res,
     @Req() req,
   ) {
-    // console.log(req.currentUser);
     const orders = await this.orderService.findOwnOrders(
       {
         page,

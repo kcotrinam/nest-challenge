@@ -18,6 +18,8 @@ import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { TokensService } from './tokens/tokens.service';
 import { UsersService } from './users/users.service';
 import { AttachmentService } from './attachment/attachment.service';
+import { OrderProductsModule } from './order-products/order-products.module';
+import { OrderProductsService } from './order-products/order-products.service';
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { AttachmentService } from './attachment/attachment.service';
     LikesModule,
     TokensModule,
     OrdersModule,
+    OrderProductsModule,
   ],
   controllers: [AppController],
   providers: [
