@@ -24,12 +24,33 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This project is a challenge to create a REST-API using Nest framework with Prisma ORM.
+
+## Demo:
 
 ## Installation
 
 ```bash
 $ npm install
+```
+
+### Configure the environment
+
+```
+DATABASE_URL=
+JWT_SECRET=
+AWS_REGION=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_PRIVATE_BUCKET_NAME=
+```
+
+## Prisma
+
+```bash
+# migrate database
+$ npx prisma migrate dev
+
 ```
 
 ## Running the app
@@ -62,11 +83,15 @@ $ npm run test:cov
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
+## Authors
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+**Kevin Cotrina**
+
+- GitHub: [kcotrinam](https://github.com/kcotrinam)
+
+**Christian Sagástegu**
+
+- GitHub: [csagastegui59](https://github.com/csagastegui59)
 
 ## License
 

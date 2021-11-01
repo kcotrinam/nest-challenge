@@ -3,14 +3,12 @@ import { PrismaService } from 'src/prisma-service/prisma.service';
 import jwt = require('jsonwebtoken');
 import createError from 'http-errors';
 
-const secret = 'secret';
-
 @Injectable()
 export class TokensService {
   constructor(private readonly prisma: PrismaService) {}
 
   async createToken(userId: number) {
-    const token = jwt.sign({ id: userId }, secret, {
+    const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
 
@@ -29,7 +27,7 @@ export class TokensService {
   }
 
   async verifyToken(token: string) {
-    const decoded = jwt.verify(token, secret);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const validToken = await this.prisma.token.findFirst({
       where: { jti: token },
