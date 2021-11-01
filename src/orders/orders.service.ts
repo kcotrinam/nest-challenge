@@ -3,7 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from 'src/pagination/pagination.helper';
 import { paginationSerializer } from 'src/pagination/serializer';
-import { PrismaService } from 'src/prisma-service/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { errorMessage } from 'src/utils/error-message-constructor';
 import { CreateOrderDto } from './dto/request/create-order.dto';
 import { UpdateOrderDto } from './dto/request/update-order.dto';

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { PrismaService } from 'src/prisma-service/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { UserDto } from './dtos/response/user.dto';
 import createError from 'http-errors';
 import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';

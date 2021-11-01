@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
-import { PrismaService } from 'src/prisma-service/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()

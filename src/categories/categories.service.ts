@@ -4,7 +4,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { errorMessage } from 'src/utils/error-message-constructor';
 import { plainToClass } from 'class-transformer';
 import { CategoryDto } from './dto/category.dto';
-import { PrismaService } from '../prisma-service/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from '../pagination/pagination.helper';
 import { paginationSerializer } from '../pagination/serializer';
