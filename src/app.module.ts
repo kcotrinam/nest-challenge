@@ -1,4 +1,4 @@
-import { PrismaService } from './prisma-service/prisma.service';
+import { PrismaService } from './prisma/prisma.service';
 import {
   MiddlewareConsumer,
   Module,
@@ -19,7 +19,7 @@ import { TokensService } from './tokens/tokens.service';
 import { UsersService } from './users/users.service';
 import { AttachmentService } from './attachment/attachment.service';
 import { OrderProductsModule } from './order-products/order-products.module';
-import { OrderProductsService } from './order-products/order-products.service';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -31,6 +31,7 @@ import { OrderProductsService } from './order-products/order-products.service';
     TokensModule,
     OrdersModule,
     OrderProductsModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [

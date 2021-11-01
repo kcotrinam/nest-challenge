@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'src/prisma-service/prisma.service';
-import { TokensService } from 'src/tokens/tokens.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { TokensService } from '../tokens/tokens.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
