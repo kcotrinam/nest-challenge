@@ -19,7 +19,6 @@ const fakeUserOne = {
 describe('AuthService', () => {
   let service: AuthService;
   let prisma: PrismaService;
-  let tokensService: TokensService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,7 +27,6 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     prisma = module.get<PrismaService>(PrismaService);
-    tokensService = module.get<TokensService>(TokensService);
 
     await prisma.token.deleteMany({});
     await prisma.user.deleteMany({});

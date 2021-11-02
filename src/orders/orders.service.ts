@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { PaginationQueryDto } from 'src/pagination/dtos/pagination-query.dto';
-import { paginatedHelper } from 'src/pagination/pagination.helper';
-import { paginationSerializer } from 'src/pagination/serializer';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { errorMessage } from 'src/utils/error-message-constructor';
+import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
+import { paginatedHelper } from '../pagination/pagination.helper';
+import { paginationSerializer } from '../pagination/serializer';
+import { PrismaService } from '../prisma/prisma.service';
+import { errorMessage } from '../utils/error-message-constructor';
 import { CreateOrderDto } from './dto/request/create-order.dto';
 import { UpdateOrderDto } from './dto/request/update-order.dto';
 import { OrderDto } from './dto/response/order.dto';
@@ -30,9 +30,6 @@ export class OrdersService {
 
     const total = await this.prisma.order.count();
     const orders = await this.prisma.order.findMany({
-      where: {
-        userId,
-      },
       skip,
       take,
     });
@@ -122,7 +119,6 @@ export class OrdersService {
         HttpStatus.NOT_FOUND,
       );
     }
-    console.log(order);
 
     await this.prisma.order.delete({ where: { id } });
   }

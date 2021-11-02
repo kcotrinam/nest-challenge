@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from '../users/dtos/request/create-user.dto';
 import bcrypt = require('bcrypt');
 import crypto = require('crypto');
-import createError from 'http-errors';
 import { plainToClass } from 'class-transformer';
 import { UserDto } from '../users/dtos/response/user.dto';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
