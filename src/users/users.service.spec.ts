@@ -6,7 +6,6 @@ import { AuthService } from '../auth/auth.service';
 import { plainToClass } from 'class-transformer';
 import { CreateUserDto } from './dtos/request/create-user.dto';
 import { TokensService } from '../tokens/tokens.service';
-import { SignInDto } from '../auth/sign-in.dto';
 import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
 import { HttpException } from '@nestjs/common';
 
