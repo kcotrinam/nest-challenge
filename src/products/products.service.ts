@@ -107,10 +107,7 @@ export class ProductsService {
   ): Promise<{ data: DetailedProductDto }> {
     if (!isManager) {
       throw new HttpException(
-        errorMessage(
-          HttpStatus.FORBIDDEN,
-          'ONLY MANAGERS CAN VIEW DISABLED PRODUCTS',
-        ),
+        errorMessage(HttpStatus.FORBIDDEN, 'ONLY MANAGERS CAN UPDATE PRODUCTS'),
         HttpStatus.FORBIDDEN,
       );
     }
@@ -144,10 +141,7 @@ export class ProductsService {
   async remove(id: number, isManager: boolean): Promise<void> {
     if (!isManager) {
       throw new HttpException(
-        errorMessage(
-          HttpStatus.FORBIDDEN,
-          'ONLY MANAGERS CAN VIEW DISABLED PRODUCTS',
-        ),
+        errorMessage(HttpStatus.FORBIDDEN, 'ONLY MANAGERS CAN DELETE PRODUCTS'),
         HttpStatus.FORBIDDEN,
       );
     }
@@ -167,7 +161,7 @@ export class ProductsService {
       throw new HttpException(
         errorMessage(
           HttpStatus.FORBIDDEN,
-          'ONLY MANAGERS CAN VIEW DISABLED PRODUCTS',
+          'ONLY MANAGERS CAN CHANGE PRODUCTS AVAILABILITY',
         ),
         HttpStatus.FORBIDDEN,
       );
