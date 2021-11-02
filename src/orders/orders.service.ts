@@ -30,9 +30,6 @@ export class OrdersService {
 
     const total = await this.prisma.order.count();
     const orders = await this.prisma.order.findMany({
-      where: {
-        userId,
-      },
       skip,
       take,
     });
@@ -122,7 +119,6 @@ export class OrdersService {
         HttpStatus.NOT_FOUND,
       );
     }
-    console.log(order);
 
     await this.prisma.order.delete({ where: { id } });
   }

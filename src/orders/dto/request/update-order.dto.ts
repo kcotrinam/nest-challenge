@@ -7,11 +7,11 @@ export class UpdateOrderDto {
   @IsNotEmpty()
   @IsOptional()
   @IsDecimal()
-  readonly total: number;
+  readonly total?: number;
 
   @Expose()
   @IsNotEmpty()
   @IsOptional()
   @IsBoolean()
-  readonly isPaid: boolean;
+  readonly isPaid?: boolean;
 }

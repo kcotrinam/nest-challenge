@@ -40,6 +40,8 @@ describe('ProductsService', () => {
     productsService = module.get<ProductsService>(ProductsService);
     categoriesService = module.get<CategoriesService>(CategoriesService);
     prismaService = module.get<PrismaService>(PrismaService);
+
+    await prismaService.clearDatabase();
   });
 
   afterAll(async () => {
@@ -181,6 +183,7 @@ describe('ProductsService', () => {
       fakeProductTwo,
       true,
     );
+    console.log(updateProduct);
     expect(updateProduct).toHaveProperty('id');
   });
 
