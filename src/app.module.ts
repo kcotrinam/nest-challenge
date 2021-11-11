@@ -5,6 +5,7 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
@@ -20,6 +21,7 @@ import { UsersService } from './users/users.service';
 import { AttachmentService } from './attachment/attachment.service';
 import { OrderProductsModule } from './order-products/order-products.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { GraphQLModule } from '@nestjs/graphql';
 
 @Module({
   imports: [
@@ -32,6 +34,10 @@ import { PrismaModule } from './prisma/prisma.module';
     OrdersModule,
     OrderProductsModule,
     PrismaModule,
+    GraphQLModule.forRoot({
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
+    }),
   ],
   controllers: [AppController],
   providers: [
@@ -55,6 +61,10 @@ export class AppModule implements NestModule {
         },
         {
           path: 'products',
+          method: RequestMethod.GET,
+        },
+        {
+          path: 'graphql',
           method: RequestMethod.GET,
         },
         { path: 'orders', method: RequestMethod.GET },
