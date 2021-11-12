@@ -80,6 +80,8 @@ export class CategoriesService {
       );
     }
 
-    await this.prismaService.category.delete({ where: { id } });
+    await this.prismaService.category.delete({
+      where: { id },
+    });
   }
 }
