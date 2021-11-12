@@ -6,7 +6,7 @@ import { CategoriesService } from '../categories.service';
 export class CategoriesResolver {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Query((returns) => [CategoryModel])
+  @Query(() => [CategoryModel])
   async categories(
     @Args('page', { type: () => Int }) page: number,
     @Args('perPage', { type: () => Int }) perPage: number,

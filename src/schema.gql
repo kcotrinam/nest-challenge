@@ -4,11 +4,59 @@
 
 type CategoryModel {
   createdAt: String!
-  id: String!
+  id: Int!
   name: String!
+  products: [ProductModel!]!
   updatedAt: String
+}
+
+type Mutation {
+  signIn(input: SigninInput!): TokenModel!
+  signUp(input: SignupInput!): UserModel!
+  verifyEmail(input: VerifyEmailInput!): UserModel!
+}
+
+type ProductModel {
+  description: String!
+  id: String!
+  isDisabled: Boolean!
+  name: String!
 }
 
 type Query {
   categories(page: Int!, perPage: Int!): [CategoryModel!]!
+  user(id: Int!): [UserModel!]!
+  users(page: Int!, perPage: Int!): [UserModel!]!
+}
+
+input SigninInput {
+  email: String!
+  password: String!
+}
+
+input SignupInput {
+  email: String!
+  isManager: Boolean!
+  lastname: String!
+  name: String!
+  password: String!
+}
+
+type TokenModel {
+  token: String!
+}
+
+type UserModel {
+  email: String!
+  emailVerificationToken: String
+  emailVerifiedAt: String
+  id: ID!
+  isManager: Boolean!
+  lastname: String!
+  name: String!
+}
+
+input VerifyEmailInput {
+  id: String!
+  token: String!
 }
