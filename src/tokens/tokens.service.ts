@@ -40,8 +40,8 @@ export class TokensService {
       );
     }
     // createError(401, 'Wrong authentication token');
-    if (decoded.id !== validToken.userId) return decoded.id;
+    // if (decoded.id !== validToken.userId) return decoded.id;
 
-    return decoded.id;
+    return decoded;
   }
 }
