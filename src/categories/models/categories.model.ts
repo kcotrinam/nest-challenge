@@ -10,11 +10,11 @@ export class CategoryModel {
   name: string;
 
   @Field()
-  createdAt: string;
+  createdAt: Date;
 
   @Field({ nullable: true })
-  updatedAt?: string;
+  updatedAt?: Date;
 
-  // @Field((type) => [products])
-  // products: products[];
+  @Field((type) => [ProductModel], { nullable: 'items' })
+  products: ProductModel[];
 }

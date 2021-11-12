@@ -1,8 +1,15 @@
-import { Args, Int, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { CategoryModel } from '../models/categories.model';
 import { CategoriesService } from '../categories.service';
 
-@Resolver()
+@Resolver((of) => CategoryModel)
 export class CategoriesResolver {
   constructor(private readonly categoriesService: CategoriesService) {}
 
@@ -17,5 +24,11 @@ export class CategoriesResolver {
     });
 
     return categories.data;
+  }
+
+  @ResolveField()
+  async category(@Parent() categories: CategoryModel[]) {
+    const category = await this.categoriesService.findOne(1, true);
+    return category;
   }
 }

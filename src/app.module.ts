@@ -49,33 +49,35 @@ import { GraphQLModule } from '@nestjs/graphql';
   ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware)
-      .exclude(
-        { path: 'auth', method: RequestMethod.POST },
-        { path: 'categories/:categoryId/products', method: RequestMethod.GET },
-        {
-          path: 'products/:id',
-          method: RequestMethod.GET,
-        },
-        {
-          path: 'products',
-          method: RequestMethod.GET,
-        },
-        {
-          path: 'graphql',
-          method: RequestMethod.GET,
-        },
-        { path: 'orders', method: RequestMethod.GET },
-        {
-          path: 'accounts/me/categories/:categoryId/products',
-          method: RequestMethod.GET,
-        },
-        { path: 'users', method: RequestMethod.GET },
-        'accounts/me/orders/(.*)',
-        'auth/(.*)',
-      )
-      .forRoutes('*');
+  configure() {
+    // configure(consumer: MiddlewareConsumer) {
+    //   consumer
+    //     .apply(LoggerMiddleware)
+    //     .exclude(
+    //       { path: 'auth', method: RequestMethod.POST },
+    //       { path: 'categories/:categoryId/products', method: RequestMethod.GET },
+    //       {
+    //         path: 'products/:id',
+    //         method: RequestMethod.GET,
+    //       },
+    //       {
+    //         path: 'products',
+    //         method: RequestMethod.GET,
+    //       },
+    //       {
+    //         path: 'graphql',
+    //         method: RequestMethod.GET,
+    //       },
+    //       { path: 'orders', method: RequestMethod.GET },
+    //       {
+    //         path: 'accounts/me/categories/:categoryId/products',
+    //         method: RequestMethod.GET,
+    //       },
+    //       { path: 'users', method: RequestMethod.GET },
+    //       'accounts/me/orders/(.*)',
+    //       'auth/(.*)',
+    //     )
+    //     .forRoutes('*');
+    // }
   }
 }
