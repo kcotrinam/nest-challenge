@@ -4,7 +4,7 @@ import { OrderModel } from '../../orders/models/orders.model';
 import { TokenModel } from '../../tokens/models/tokens.model';
 
 @ObjectType()
-export class ProductModel {
+export class UserModel {
   @Field()
   id: string;
 

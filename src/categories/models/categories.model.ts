@@ -9,12 +9,12 @@ export class CategoryModel {
   @Field()
   name: string;
 
-  @Field()
-  createdAt: Date;
+  @Field({ nullable: true })
+  createdAt?: Date;
 
   @Field({ nullable: true })
   updatedAt?: Date;
 
   @Field((type) => [ProductModel], { nullable: 'items' })
-  products: ProductModel[];
+  products?: ProductModel[];
 }

@@ -24,19 +24,18 @@ export class CategoriesController {
 
   @Get()
   async findAll(
-    @Req() req,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('perPage', new DefaultValuePipe(20), ParseIntPipe) perPage: number,
   ) {
-    return await this.categoriesService.findAll(req.currentUserRole, {
+    return await this.categoriesService.findAll({
       page,
       perPage,
     });
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Req() req) {
-    return this.categoriesService.findOne(+id, req.currentUserRole);
+  findOne(@Param('id') id: string) {
+    return this.categoriesService.findOne(+id);
   }
 
   @Post()

@@ -13,7 +13,7 @@ import { paginationSerializer } from '../pagination/serializer';
 export class CategoriesService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findAll(isManager: boolean, paginationQuery: PaginationQueryDto) {
+  async findAll(paginationQuery: PaginationQueryDto) {
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
     const total = await this.prismaService.category.count();
@@ -23,24 +23,10 @@ export class CategoriesService {
       take,
     });
 
-    if (!isManager) {
-      throw new HttpException(
-        errorMessage(HttpStatus.UNAUTHORIZED, 'YOU ARE NOT AUTHORIZED'),
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
     return { pageInfo, data: plainToClass(CategoryDto, categories) };
   }
 
-  async findOne(id: number, manager: boolean) {
-    if (!manager) {
-      throw new HttpException(
-        errorMessage(HttpStatus.UNAUTHORIZED, 'YOU ARE NOT AUTHORIZED'),
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
+  async findOne(id: number) {
     const category = await this.prismaService.category.findUnique({
       where: { id },
     });
