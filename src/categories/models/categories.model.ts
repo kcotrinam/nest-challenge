@@ -15,6 +15,6 @@ export class CategoryModel {
   @Field({ nullable: true })
   updatedAt?: string;
 
-  // @Field((type) => [products])
-  // products: products[];
+  @Field((type) => [ProductModel])
+  products: ProductModel[];
 }
