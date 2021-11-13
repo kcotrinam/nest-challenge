@@ -44,7 +44,7 @@ model Product {
   description String
   price       Float
   likeCounter Int @default(0) @map("like_counter") //check if optional is not necessary
-  stock       Int @default(0)
+  stock       Int 
   image       String?
   isDisabled  Boolean @default(false) @map("is_disabled")
   category    Category @relation(fields: [categoryId], references: [id])

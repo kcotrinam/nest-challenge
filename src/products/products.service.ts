@@ -38,7 +38,9 @@ export class ProductsService {
         name: input.name,
         description: input.description,
         price: input.price,
+        stock: input.stock,
         categoryId: categoryId,
+        isDisabled: input.isDisabled,
       },
     });
 
@@ -48,10 +50,13 @@ export class ProductsService {
   async findAll(paginationQuery: PaginationQueryDto) {
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
-    const total = await this.prismaService.product.count();
+    const total = await this.prismaService.product.count({
+      where: { isDisabled: false },
+    });
     const pageInfo = paginationSerializer(total, { page, perPage });
 
     const products = await this.prismaService.product.findMany({
+      where: { isDisabled: false },
       skip,
       take,
     });
@@ -104,7 +109,7 @@ export class ProductsService {
     id: number,
     updateProductDto: UpdateProductDto,
     isManager: boolean,
-  ): Promise<{ data: DetailedProductDto }> {
+  ) {
     if (!isManager) {
       throw new HttpException(
         errorMessage(HttpStatus.FORBIDDEN, 'ONLY MANAGERS CAN UPDATE PRODUCTS'),
@@ -117,7 +122,7 @@ export class ProductsService {
       data: updateProductDto,
     });
 
-    return { data: plainToClass(DetailedProductDto, updatedProduct) };
+    return { data: plainToClass(UpdateProductDto, updatedProduct) };
   }
 
   async updateLikes(id: number, action: string): Promise<void> {
@@ -138,7 +143,7 @@ export class ProductsService {
     }
   }
 
-  async remove(id: number, isManager: boolean): Promise<void> {
+  async remove(id: number, isManager: boolean) {
     if (!isManager) {
       throw new HttpException(
         errorMessage(HttpStatus.FORBIDDEN, 'ONLY MANAGERS CAN DELETE PRODUCTS'),
@@ -147,7 +152,10 @@ export class ProductsService {
     }
 
     try {
-      await this.prismaService.product.delete({ where: { id } });
+      const deletedProduct = await this.prismaService.product.delete({
+        where: { id },
+      });
+      return deletedProduct;
     } catch (error) {
       throw new HttpException(
         errorMessage(HttpStatus.NOT_FOUND, 'PRODUCT NOT FOUND'),

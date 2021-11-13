@@ -7,6 +7,10 @@ export class ProductDto {
 
   @Expose()
   readonly likeCounter: number;
+
+  @Expose()
+  readonly description: string;
+
   @Expose()
   readonly name: string;
 
@@ -18,4 +22,10 @@ export class ProductDto {
 
   @Expose()
   readonly price: number;
+
+  @Expose()
+  readonly categoryId: number;
+
+  @Expose()
+  readonly isDisabled: boolean;
 }

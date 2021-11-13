@@ -11,16 +11,16 @@ export class ProductModel {
   @Field()
   description: string;
 
-  @Field({ defaultValue: false })
+  @Field({ nullable: true })
   isDisabled: boolean;
 
   @Field()
   price: number;
 
-  @Field({ defaultValue: 0 })
+  @Field()
   likeCounter: number;
 
-  @Field({ defaultValue: 0 })
+  @Field()
   stock: number;
 
   @Field()

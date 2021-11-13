@@ -3,7 +3,7 @@
 # ------------------------------------------------------
 
 type CategoryModel {
-  createdAt: DateTime
+  createdAt: DateTime!
   id: String!
   name: String!
   products: [ProductModel]!
@@ -14,6 +14,15 @@ input CreateCategoryModel {
   name: String!
 }
 
+input CreateProductModel {
+  description: String
+  image: String
+  isDisabled: Boolean
+  name: String!
+  price: Float!
+  stock: Float!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -21,8 +30,11 @@ scalar DateTime
 
 type Mutation {
   createCategory(input: CreateCategoryModel!): CategoryModel!
+  createProduct(categoryId: Int!, input: CreateProductModel!): ProductModel!
   removeCategory(id: Int!): CategoryModel!
+  removeProduct(id: Int!): ProductModel!
   updateCategory(input: UpdateCategoryModel!): CategoryModel!
+  updateProduct(input: UpdateProductModel!): ProductModel!
 }
 
 type ProductModel {
@@ -31,7 +43,7 @@ type ProductModel {
   description: String!
   id: String!
   image: String!
-  isDisabled: Boolean!
+  isDisabled: Boolean
   likeCounter: Float!
   name: String!
   price: Float!
@@ -42,9 +54,21 @@ type ProductModel {
 type Query {
   categories(page: Int!, perPage: Int!): [CategoryModel!]!
   category(id: Int!): CategoryModel!
+  disabledProducts(page: Int!, perPage: Int!): [ProductModel!]!
+  product(id: Int!): ProductModel!
+  products(page: Int!, perPage: Int!): [ProductModel!]!
 }
 
 input UpdateCategoryModel {
   id: Float!
   name: String!
+}
+
+input UpdateProductModel {
+  description: String
+  id: Float!
+  image: String
+  name: String
+  price: Float
+  stock: Float
 }
