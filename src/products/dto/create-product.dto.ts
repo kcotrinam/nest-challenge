@@ -11,7 +11,7 @@ export class CreateProductDto {
   @Expose()
   @IsString()
   @IsNotEmpty()
-  readonly description: string;
+  readonly description?: string;
 
   @Expose()
   @IsString()
@@ -26,4 +26,9 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsNumber()
   readonly price: number;
+
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  readonly isDisabled?: boolean;
 }

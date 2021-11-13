@@ -1,4 +1,34 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateProductDto } from './create-product.dto';
+import { Exclude, Expose } from 'class-transformer';
 
-export class UpdateProductDto extends PartialType(CreateProductDto) {}
+@Exclude()
+export class UpdateProductDto {
+  @Expose()
+  readonly id: number;
+
+  @Expose()
+  name?: string;
+
+  @Expose()
+  description?: string;
+
+  @Expose()
+  isDisabled?: boolean;
+
+  @Expose()
+  image?: string;
+
+  @Expose()
+  stock?: number;
+
+  @Expose()
+  price?: number;
+
+  @Expose()
+  categoryId?: number;
+
+  @Expose()
+  readonly createdAt?: Date;
+
+  @Expose()
+  readonly updatedAt?: Date;
+}

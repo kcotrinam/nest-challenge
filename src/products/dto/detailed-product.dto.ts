@@ -22,4 +22,13 @@ export class DetailedProductDto {
 
   @Expose()
   readonly price: number;
+
+  @Expose()
+  readonly categoryId: number;
+
+  @Expose()
+  readonly createdAt: Date;
+
+  @Expose()
+  readonly updatedAt?: Date;
 }
