@@ -41,8 +41,7 @@ export class CategoriesResolver {
 
   @Mutation(() => CategoryModel)
   async removeCategory(@Args('id', { type: () => Int }) id: number) {
-    const deletedCategory = await this.categoriesService.findOne(id);
-    await this.categoriesService.remove(id, true);
+    const deletedCategory = await this.categoriesService.remove(id, true);
     return deletedCategory;
   }
 }

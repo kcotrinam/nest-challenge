@@ -72,7 +72,7 @@ export class CategoriesService {
     return plainToClass(CategoryDto, updatedCategory);
   }
 
-  async remove(id: number, manager: boolean): Promise<void> {
+  async remove(id: number, manager: boolean) {
     if (!manager) {
       throw new HttpException(
         errorMessage(HttpStatus.UNAUTHORIZED, 'YOU ARE NOT AUTHORIZED'),
@@ -80,8 +80,9 @@ export class CategoriesService {
       );
     }
 
-    await this.prismaService.category.delete({
+    const deletedCategory = await this.prismaService.category.delete({
       where: { id },
     });
+    return deletedCategory;
   }
 }
