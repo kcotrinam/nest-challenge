@@ -9,8 +9,8 @@ export class CategoryModel {
   @Field()
   name: string;
 
-  @Field({ nullable: true })
-  createdAt?: Date;
+  @Field()
+  createdAt: Date;
 
   @Field({ nullable: true })
   updatedAt?: Date;

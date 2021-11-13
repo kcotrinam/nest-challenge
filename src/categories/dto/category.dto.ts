@@ -7,4 +7,10 @@ export class CategoryDto {
 
   @Expose()
   name: string;
+
+  @Expose()
+  createdAt: Date;
+
+  @Expose()
+  updatedAt?: Date;
 }

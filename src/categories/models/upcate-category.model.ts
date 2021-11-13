@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql';
 @InputType()
 export class UpdateCategoryModel {
   @Field()
-  readonly name?: string;
+  name?: string;
 
   @Field()
   readonly id?: number;
