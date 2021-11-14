@@ -1,7 +1,7 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { LikeModel } from '../likes/models/likes.model';
-import { LikesService } from './likes.service';
-import { CreateLikeModel } from './models/create-like.model';
+import { LikeModel } from '../models/like.model';
+import { LikesService } from '../likes.service';
+import { CreateLikeModel } from '../models/create-like.model';
 
 @Resolver(() => LikeModel)
 export class LikesResolver {
@@ -11,5 +11,6 @@ export class LikesResolver {
   async createLike(@Args('input') input: CreateLikeModel) {
     const like = await this.likesService.create(input.productId, input.userId);
     console.log(like);
+    return like;
   }
 }

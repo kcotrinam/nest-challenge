@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { OrderProductModel } from '../../order-products/models/order-products.model';
+// import { OrderProductModel } from '../../order-products/models/order-products.model';
 
 @ObjectType()
 export class OrderModel {
@@ -15,11 +15,11 @@ export class OrderModel {
   @Field()
   userId: number;
 
-  @Field((type) => OrderProductModel)
-  orderItems: [OrderProductModel];
+  // @Field((type) => [OrderProductModel])
+  // orderItems: OrderProductModel[];
 
-  @Field()
-  createdAt: Date;
+  @Field({ nullable: true })
+  createdAt?: Date;
 
   @Field({ nullable: true })
   updatedAt?: Date;

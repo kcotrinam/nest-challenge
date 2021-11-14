@@ -1,5 +1,5 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CategoryModel } from '../models/categories.model';
+import { CategoryModel } from '../models/category.model';
 import { CategoriesService } from '../categories.service';
 import { CreateCategoryModel } from '../models/create-category.model';
 import { UpdateCategoryModel } from '../models/upcate-category.model';

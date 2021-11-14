@@ -45,7 +45,6 @@ export class OrdersController {
     @Query('perPage', new DefaultValuePipe(20), ParseIntPipe) perPage: number,
     @Res() res,
     @Req() req,
-    @Param('userId') userId: string,
   ) {
     const userLoggedRole = req.currentUserRole;
     const orders = await this.orderService.findAll(
@@ -54,7 +53,6 @@ export class OrdersController {
         perPage,
       },
       userLoggedRole,
-      +userId,
     );
 
     res.status(200).json(orders);

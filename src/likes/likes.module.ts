@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
 import { AttachmentService } from '../attachment/attachment.service';
-import { LikesResolver } from './likes.resolver';
+import { LikesResolver } from './resolvers/likes.resolver';
 
 @Module({
   controllers: [LikesController],

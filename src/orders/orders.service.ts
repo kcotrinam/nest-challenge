@@ -13,11 +13,7 @@ import { OrderDto } from './dto/response/order.dto';
 export class OrdersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(
-    paginationQuery: PaginationQueryDto,
-    userRole: boolean,
-    userId: number,
-  ) {
+  async findAll(paginationQuery: PaginationQueryDto, userRole: boolean) {
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
 
@@ -54,7 +50,7 @@ export class OrdersService {
 
     const pageInfo = paginationSerializer(total, { page, perPage });
 
-    return { pageInfo, data: plainToClass(OrderDto, orders) };
+    return plainToClass(OrderDto, orders);
   }
 
   async create(userId: number, order: CreateOrderDto): Promise<OrderDto> {
@@ -105,7 +101,7 @@ export class OrdersService {
     return plainToClass(OrderDto, updatedOrder);
   }
 
-  async delete(id: number, userId: number): Promise<void> {
+  async delete(id: number, userId: number) {
     const order = await this.prisma.order.count({
       where: {
         id,
@@ -120,6 +116,7 @@ export class OrdersService {
       );
     }
 
-    await this.prisma.order.delete({ where: { id } });
+    const deletedOrder = await this.prisma.order.delete({ where: { id } });
+    return deletedOrder;
   }
 }

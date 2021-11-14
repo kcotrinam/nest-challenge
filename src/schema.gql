@@ -19,6 +19,12 @@ input CreateLikeModel {
   userId: Float!
 }
 
+input CreateOrderModel {
+  isPaid: Boolean!
+  total: Float!
+  user: Float!
+}
+
 input CreateProductModel {
   description: String
   image: String
@@ -44,14 +50,26 @@ type LikeModel {
 type Mutation {
   createCategory(input: CreateCategoryModel!): CategoryModel!
   createLike(input: CreateLikeModel!): LikeModel!
+  createOrder(input: CreateOrderModel!): OrderModel!
   createProduct(categoryId: Int!, input: CreateProductModel!): ProductModel!
   removeCategory(id: Int!): CategoryModel!
+  removeOrder(id: Int!, userId: Int!): OrderModel!
   removeProduct(id: Int!): ProductModel!
   signIn(input: SigninInput!): TokenModel!
   signUp(input: SignupInput!): UserModel!
   updateCategory(input: UpdateCategoryModel!): CategoryModel!
+  updateOrder(input: UpdateOrderModel!): OrderModel!
   updateProduct(input: UpdateProductModel!): ProductModel!
   verifyEmail(input: VerifyEmailInput!): UserModel!
+}
+
+type OrderModel {
+  createdAt: DateTime
+  id: String!
+  isPaid: Boolean!
+  total: Float!
+  updatedAt: DateTime
+  userId: Float!
 }
 
 type ProductModel {
@@ -72,6 +90,9 @@ type Query {
   categories(page: Int!, perPage: Int!): [CategoryModel!]!
   category(id: Int!): CategoryModel!
   disabledProducts(page: Int!, perPage: Int!): [ProductModel!]!
+  order(id: Int!): OrderModel!
+  orders(page: Int!, perPage: Int!): [OrderModel!]!
+  ownOrders(page: Int!, perPage: Int!, userId: Int!): [OrderModel!]!
   product(id: Int!): ProductModel!
   products(page: Int!, perPage: Int!): [ProductModel!]!
   user(id: Int!): [UserModel!]!
@@ -98,6 +119,13 @@ type TokenModel {
 input UpdateCategoryModel {
   id: Float!
   name: String!
+}
+
+input UpdateOrderModel {
+  id: Float!
+  isPaid: Boolean
+  total: Float
+  userId: Float!
 }
 
 input UpdateProductModel {
