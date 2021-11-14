@@ -14,6 +14,11 @@ input CreateCategoryModel {
   name: String!
 }
 
+input CreateLikeModel {
+  productId: Float!
+  userId: Float!
+}
+
 input CreateProductModel {
   description: String
   image: String
@@ -28,8 +33,17 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type LikeModel {
+  createdAt: DateTime!
+  id: String!
+  productId: String!
+  updatedAt: DateTime
+  userId: String!
+}
+
 type Mutation {
   createCategory(input: CreateCategoryModel!): CategoryModel!
+  createLike(input: CreateLikeModel!): LikeModel!
   createProduct(categoryId: Int!, input: CreateProductModel!): ProductModel!
   removeCategory(id: Int!): CategoryModel!
   removeProduct(id: Int!): ProductModel!

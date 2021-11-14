@@ -10,7 +10,7 @@ export class LikesService {
     private readonly productService: ProductsService,
   ) {}
 
-  async create(productId: number, userId: number): Promise<void> {
+  async create(productId: number, userId: number) {
     const product = await this.prisma.product.findUnique({
       where: { id: productId },
     });
