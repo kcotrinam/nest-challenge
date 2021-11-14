@@ -10,11 +10,6 @@ import { SignInDto } from './sign-in.dto';
 import { TokensService } from '../tokens/tokens.service';
 import { errorMessage } from '../utils/error-message-constructor';
 
-interface signInResponse {
-  user: UserDto;
-  token: string;
-}
-
 @Injectable()
 export class AuthService {
   constructor(
@@ -48,7 +43,7 @@ export class AuthService {
     return plainToClass(UserDto, user);
   }
 
-  async signIn(input: SignInDto): Promise<signInResponse> {
+  async signIn(input: SignInDto) {
     const { email, password } = input;
     const user = await this.prisma.user.findUnique({
       where: { email },
@@ -75,7 +70,8 @@ export class AuthService {
 
     const token = await this.tokenService.createToken(user.id);
 
-    return { token, user: plainToClass(UserDto, user) };
+    return { token };
+    // return { token, user: plainToClass(UserDto, user) };
   }
 
   async verifyEmail(input: VerifyEmailDto): Promise<UserDto> {

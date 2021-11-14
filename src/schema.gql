@@ -4,7 +4,7 @@
 
 type CategoryModel {
   createdAt: DateTime!
-  id: String!
+  id: Int!
   name: String!
   products: [ProductModel]!
   updatedAt: DateTime
@@ -47,8 +47,11 @@ type Mutation {
   createProduct(categoryId: Int!, input: CreateProductModel!): ProductModel!
   removeCategory(id: Int!): CategoryModel!
   removeProduct(id: Int!): ProductModel!
+  signIn(input: SigninInput!): TokenModel!
+  signUp(input: SignupInput!): UserModel!
   updateCategory(input: UpdateCategoryModel!): CategoryModel!
   updateProduct(input: UpdateProductModel!): ProductModel!
+  verifyEmail(input: VerifyEmailInput!): UserModel!
 }
 
 type ProductModel {
@@ -71,6 +74,25 @@ type Query {
   disabledProducts(page: Int!, perPage: Int!): [ProductModel!]!
   product(id: Int!): ProductModel!
   products(page: Int!, perPage: Int!): [ProductModel!]!
+  user(id: Int!): [UserModel!]!
+  users(page: Int!, perPage: Int!): [UserModel!]!
+}
+
+input SigninInput {
+  email: String!
+  password: String!
+}
+
+input SignupInput {
+  email: String!
+  isManager: Boolean!
+  lastname: String!
+  name: String!
+  password: String!
+}
+
+type TokenModel {
+  token: String!
 }
 
 input UpdateCategoryModel {
@@ -85,4 +107,19 @@ input UpdateProductModel {
   name: String
   price: Float
   stock: Float
+}
+
+type UserModel {
+  email: String!
+  emailVerificationToken: String
+  emailVerifiedAt: String
+  id: ID!
+  isManager: Boolean!
+  lastname: String!
+  name: String!
+}
+
+input VerifyEmailInput {
+  id: String!
+  token: String!
 }
