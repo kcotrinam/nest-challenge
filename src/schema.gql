@@ -43,7 +43,7 @@ input SignupInput {
 }
 
 type TokenModel {
-  token: String!
+  accessToken: String!
 }
 
 type UserModel {

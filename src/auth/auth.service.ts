@@ -7,18 +7,18 @@ import { plainToClass } from 'class-transformer';
 import { UserDto } from '../users/dtos/response/user.dto';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
 import { SignInDto } from './dtos/sign-in.dto';
-import { TokensService } from '../tokens/tokens.service';
 import { errorMessage } from '../utils/error-message-constructor';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { TokensService } from '../tokens/tokens.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly tokenService: TokensService,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly tokensService: TokensService,
   ) {}
 
   async signUp(input: CreateUserDto) {
@@ -53,11 +53,10 @@ export class AuthService {
 
     const payload = {
       id: user.id,
-      role: user.isManager ? 'MANAGER' : 'USER',
+      isManager: user.isManager,
     };
 
     const token = await this.generateToken(payload);
-    console.log(token);
 
     return { accessToken: token };
   }
@@ -123,7 +122,7 @@ export class AuthService {
 
   private async generateToken(payload): Promise<string> {
     const token = await this.jwtService.sign(payload);
-    // const token = await this.tokenService.createToken();
+    await this.tokensService.createToken(payload.id, token);
 
     return token;
   }

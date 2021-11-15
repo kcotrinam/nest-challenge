@@ -4,5 +4,6 @@ import { TokensService } from './tokens.service';
 
 @Module({
   providers: [TokensService, PrismaService],
+  exports: [TokensService],
 })
 export class TokensModule {}

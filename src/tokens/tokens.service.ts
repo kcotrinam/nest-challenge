@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import jwt = require('jsonwebtoken');
 import { errorMessage } from '../utils/error-message-constructor';
+import { decodedToken } from './interfaces/token-verification.interface';
 
 @Injectable()
 export class TokensService {
@@ -20,7 +21,7 @@ export class TokensService {
     });
   }
 
-  async verifyToken(token: string) {
+  async verifyToken(token: string): Promise<decodedToken> {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const validToken = await this.prisma.token.findFirst({
@@ -33,9 +34,7 @@ export class TokensService {
         HttpStatus.NOT_FOUND,
       );
     }
-    // createError(401, 'Wrong authentication token');
-    // if (decoded.id !== validToken.userId) return decoded.id;
 
-    return decoded;
+    return decoded as decodedToken;
   }
 }

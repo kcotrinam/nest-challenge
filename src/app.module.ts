@@ -37,6 +37,9 @@ import { GraphQLModule } from '@nestjs/graphql';
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
+      context: ({ req }) => {
+        return { request: req };
+      },
     }),
   ],
   controllers: [AppController],
