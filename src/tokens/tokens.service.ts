@@ -7,11 +7,7 @@ import { errorMessage } from '../utils/error-message-constructor';
 export class TokensService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createToken(userId: number) {
-    const token = jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
-
+  async createToken(userId: number, token: string): Promise<void> {
     await this.prisma.token.create({
       data: {
         jti: token,
@@ -22,8 +18,6 @@ export class TokensService {
         },
       },
     });
-
-    return token;
   }
 
   async verifyToken(token: string) {

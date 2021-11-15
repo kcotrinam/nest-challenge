@@ -4,7 +4,7 @@ import { CreateUserDto } from '../../users/dtos/request/create-user.dto';
 import { UserModel } from '../../users/models/users.model';
 import { AuthService } from '../auth.service';
 import { SigninInput } from '../models/sign-in.model';
-import { SignInDto } from '../sign-in.dto';
+import { SignInDto } from '../dtos/sign-in.dto';
 import { SignupInput } from '../models/sign-up.model';
 import { TokenModel } from '../models/token.model';
 import { VerifyEmailInput } from '../models/verify-email.model';

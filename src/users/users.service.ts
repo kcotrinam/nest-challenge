@@ -6,6 +6,7 @@ import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from '../pagination/pagination.helper';
 import { paginationSerializer } from '../pagination/serializer';
 import { errorMessage } from '../utils/error-message-constructor';
+import { User } from '.prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -36,6 +37,14 @@ export class UsersService {
     }
 
     return plainToClass(UserDto, user);
+  }
+
+  async findOneByEmail(email: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    return user;
   }
 
   async switchRole(id: number, userRole: boolean): Promise<UserDto> {
