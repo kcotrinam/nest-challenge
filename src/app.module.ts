@@ -22,6 +22,7 @@ import { AttachmentService } from './attachment/attachment.service';
 import { OrderProductsModule } from './order-products/order-products.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { GraphQLModule } from '@nestjs/graphql';
+import { SendgridModule } from './sendgrid/sendgrid.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { GraphQLModule } from '@nestjs/graphql';
         return { request: req };
       },
     }),
+    SendgridModule,
   ],
   controllers: [AppController],
   providers: [
