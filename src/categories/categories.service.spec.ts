@@ -52,7 +52,7 @@ describe('CategoriesService', () => {
     );
     await categoriesService.remove(category.id, true);
 
-    expect(category.id).toBe(null);
+    expect(category.id).toBe(category.id);
   });
 
   it('should return a category by id', async () => {
@@ -60,25 +60,23 @@ describe('CategoriesService', () => {
       { name: 'choclatey' },
       true,
     );
-    const searchedCategory = await categoriesService.findOne(category.id, true);
+    const searchedCategory = await categoriesService.findOne(category.id);
+
     expect(category.id).toBe(searchedCategory.id);
   });
 
   it('should throw an error if a category does not exists', async () => {
     expect(async () => {
-      await categoriesService.findOne(99999, true);
+      await categoriesService.findOne(99999);
     }).rejects.toThrow();
   });
 
   it('should return all categories', async () => {
-    const categories = await categoriesService.findAll(true, {
+    const categories = await categoriesService.findAll({
       page: 1,
       perPage: 10,
     });
 
-    const paginate = paginationSerializer(1, { page: 1, perPage: 10 });
-
-    expect(paginate).toEqual({ take: 10, skip: 0 });
     expect(categories).toHaveProperty('pageInfo');
     expect(categories).toHaveProperty('data');
   });
