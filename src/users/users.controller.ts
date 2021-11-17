@@ -40,7 +40,6 @@ export class UsersController {
 
   @Patch(':id/switch-role')
   async update(@Param('id') id: string, @Res() res, @Req() req) {
-    // console.log(req.currentUserRole);
     const user = await this.usersService.switchRole(+id, req.currentUserRole);
 
     res.status(200).json(user);

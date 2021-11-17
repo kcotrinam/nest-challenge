@@ -22,6 +22,7 @@ import { AttachmentService } from './attachment/attachment.service';
 import { OrderProductsModule } from './order-products/order-products.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { GraphQLModule } from '@nestjs/graphql';
+import { SendgridModule } from './sendgrid/sendgrid.module';
 
 @Module({
   imports: [
@@ -37,7 +38,11 @@ import { GraphQLModule } from '@nestjs/graphql';
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
+      context: ({ req }) => {
+        return { request: req };
+      },
     }),
+    SendgridModule,
   ],
   controllers: [AppController],
   providers: [

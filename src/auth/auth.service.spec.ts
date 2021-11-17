@@ -6,7 +6,7 @@ import { TokensService } from '../tokens/tokens.service';
 import { CreateUserDto } from '../users/dtos/request/create-user.dto';
 import { AuthService } from './auth.service';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
-import { SignInDto } from './sign-in.dto';
+import { SignInDto } from './dtos/sign-in.dto';
 
 const fakeUserOne = {
   name: 'fake name 1',
