@@ -183,7 +183,7 @@ describe('ProductsService', () => {
       fakeProductTwo,
       true,
     );
-    console.log(updateProduct);
+
     expect(updateProduct).toHaveProperty('id');
   });
 

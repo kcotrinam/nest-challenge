@@ -113,7 +113,7 @@ input SignupInput {
 }
 
 type TokenModel {
-  token: String!
+  accessToken: String!
 }
 
 input UpdateCategoryModel {

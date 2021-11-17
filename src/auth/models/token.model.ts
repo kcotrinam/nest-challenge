@@ -6,5 +6,5 @@ export class TokenModel {
   @Field()
   @IsString()
   @IsNotEmpty()
-  readonly token: string;
+  readonly accessToken: string;
 }

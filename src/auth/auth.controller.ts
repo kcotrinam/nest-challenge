@@ -3,7 +3,7 @@ import { plainToClass } from 'class-transformer';
 import { CreateUserDto } from '../users/dtos/request/create-user.dto';
 import { AuthService } from './auth.service';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
-import { SignInDto } from './sign-in.dto';
+import { SignInDto } from './dtos/sign-in.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Auth')
