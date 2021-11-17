@@ -3,7 +3,7 @@ import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { PrismaService } from '../prisma/prisma.service';
 import { OrdersResolver } from './resolvers/orders.resolver';
-import { TokensService } from 'src/tokens/tokens.service';
+import { TokensService } from '../tokens/tokens.service';
 
 @Module({
   controllers: [OrdersController],
