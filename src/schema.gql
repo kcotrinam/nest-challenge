@@ -65,6 +65,7 @@ type Mutation {
   createProduct(categoryId: Int!, input: CreateProductModel!): ProductModel!
   deleteOrderProduct(input: DeleteOrderProductModel!): OrderProductModel!
   removeCategory(id: Int!): CategoryModel!
+  removeLike(input: CreateLikeModel!): LikeModel!
   removeOrder(id: Int!): OrderModel!
   removeProduct(id: Int!): ProductModel!
   signIn(input: SigninInput!): TokenModel!
