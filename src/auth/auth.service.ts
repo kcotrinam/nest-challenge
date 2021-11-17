@@ -13,6 +13,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TokensService } from '../tokens/tokens.service';
 import { SendgridService } from '../sendgrid/sendgrid.service';
 import { emailVerification } from '../sendgrid/interfaces/email-verification.interface';
+import { User } from '.prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -39,13 +40,13 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(input.password, 10);
     const emailVerificationToken = crypto.randomBytes(12).toString('hex');
 
-    const message: emailVerification = {
-      to: input.email,
-      subject: 'Email verification',
-      token: emailVerificationToken,
-    };
+    // const message: emailVerification = {
+    //   to: input.email,
+    //   subject: 'Email verification',
+    //   token: emailVerificationToken,
+    // };
 
-    this.sengridService.createEmail(message);
+    // this.sengridService.createEmail(message);
 
     const user = await this.prisma.user.create({
       data: {
@@ -58,7 +59,7 @@ export class AuthService {
     return plainToClass(UserDto, user);
   }
 
-  async signIn(input: SignInDto) {
+  async signIn(input: SignInDto): Promise<{ accessToken: string; user: User }> {
     const { email, password } = input;
     const user = await this.validateUser(email, password);
 
@@ -69,7 +70,7 @@ export class AuthService {
 
     const token = await this.generateToken(payload);
 
-    return { accessToken: token };
+    return { accessToken: token, user };
   }
 
   async verifyEmail(input: VerifyEmailDto): Promise<UserDto> {

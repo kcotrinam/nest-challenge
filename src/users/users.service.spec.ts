@@ -8,6 +8,8 @@ import { CreateUserDto } from './dtos/request/create-user.dto';
 import { TokensService } from '../tokens/tokens.service';
 import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
 import { HttpException } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { SendgridModule } from '../sendgrid/sendgrid.module';
 
 const adminUser = {
   name: faker.name.findName(),
@@ -34,6 +36,13 @@ describe('UsersService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        SendgridModule,
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          signOptions: { expiresIn: '60h' },
+        }),
+      ],
       providers: [UsersService, PrismaService, AuthService, TokensService],
     }).compile();
 

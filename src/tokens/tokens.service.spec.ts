@@ -1,8 +1,14 @@
+import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { plainToClass } from 'class-transformer';
+import { AuthModule } from '../auth/auth.module';
 import { AuthService } from '../auth/auth.service';
+import { SignInDto } from '../auth/dtos/sign-in.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { SendgridModule } from '../sendgrid/sendgrid.module';
 import { CreateUserDto } from '../users/dtos/request/create-user.dto';
+import { UsersModule } from '../users/users.module';
+import { UsersService } from '../users/users.service';
 import { TokensService } from './tokens.service';
 
 const fakeUserOne = {
@@ -21,7 +27,16 @@ describe('TokensService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TokensService, PrismaService, AuthService],
+      imports: [
+        UsersModule,
+        SendgridModule,
+        AuthModule,
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          signOptions: { expiresIn: '60h' },
+        }),
+      ],
+      providers: [TokensService, PrismaService, AuthService, UsersService],
     }).compile();
 
     service = module.get<TokensService>(TokensService);
@@ -46,25 +61,23 @@ describe('TokensService', () => {
   });
 
   describe('createToken', () => {
-    it('should create a token', async () => {
-      const token = await service.createToken(userOne.id);
+    it('should return undefined value', async () => {
+      const token = await service.createToken(userOne.id, 'fake token');
 
-      expect(token).toBeDefined();
-    });
-
-    it('should not return an null or undefined value', async () => {
-      const token = await service.createToken(userOne.id);
-
-      expect(token).not.toBeNull();
-      expect(token).not.toBeUndefined();
+      expect(token).toBeUndefined();
     });
   });
 
   describe('verifyToken', () => {
     it('should verify a token', async () => {
-      const token = await service.createToken(userOne.id);
+      const dto = plainToClass(SignInDto, {
+        email: fakeUserOne.email,
+        password: fakeUserOne.password,
+      });
 
-      const verified = await service.verifyToken(token);
+      const user = await authService.signIn(dto);
+
+      const verified = await service.verifyToken(user.accessToken);
 
       expect(verified).toBeTruthy();
     });

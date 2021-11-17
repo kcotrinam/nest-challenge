@@ -34,13 +34,7 @@ describe('AuthService', () => {
           signOptions: { expiresIn: '60h' },
         }),
       ],
-      providers: [
-        AuthService,
-        PrismaService,
-        TokensService,
-        UsersService,
-        // JwtService,
-      ],
+      providers: [AuthService, PrismaService, TokensService, UsersService],
     }).compile();
 
     service = module.get<AuthService>(AuthService);

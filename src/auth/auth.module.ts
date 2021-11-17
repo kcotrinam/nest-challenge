@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaService } from '../prisma/prisma.service';
 import { SendgridModule } from '../sendgrid/sendgrid.module';
@@ -27,7 +27,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PrismaService,
     TokensService,
     JwtStrategy,
-    JwtService,
     authResolver,
     UsersService,
   ],
