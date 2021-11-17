@@ -11,6 +11,8 @@ import { errorMessage } from '../utils/error-message-constructor';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { TokensService } from '../tokens/tokens.service';
+import { SendgridService } from '../sendgrid/sendgrid.service';
+import { emailVerification } from '../sendgrid/interfaces/email-verification.interface';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly tokensService: TokensService,
+    private readonly sengridService: SendgridService,
   ) {}
 
   async signUp(input: CreateUserDto) {
@@ -35,6 +38,14 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(input.password, 10);
     const emailVerificationToken = crypto.randomBytes(12).toString('hex');
+
+    const message: emailVerification = {
+      to: input.email,
+      subject: 'Email verification',
+      token: emailVerificationToken,
+    };
+
+    this.sengridService.createEmail(message);
 
     const user = await this.prisma.user.create({
       data: {

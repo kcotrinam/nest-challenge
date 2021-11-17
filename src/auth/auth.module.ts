@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { PrismaService } from '../prisma/prisma.service';
+import { SendgridModule } from '../sendgrid/sendgrid.module';
 import { TokensService } from '../tokens/tokens.service';
 import { UsersService } from '../users/users.service';
 import { AuthController } from './auth.controller';
@@ -12,6 +13,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 @Module({
   controllers: [AuthController],
   imports: [
+    SendgridModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
