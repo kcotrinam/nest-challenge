@@ -28,18 +28,19 @@ export class LikesService {
 
     if (likeExist) return;
 
-    await this.prisma.like.create({
+    const like = await this.prisma.like.create({
       data: {
         product: { connect: { id: productId } },
         user: { connect: { id: userId } },
       },
     });
 
-    const like = await this.productService.updateLikes(productId, 'increase');
+    await this.productService.updateLikes(productId, 'increase');
+
     return like;
   }
 
-  async remove(productId: number, userId: number): Promise<void> {
+  async remove(productId: number, userId: number) {
     const likeExist = await this.prisma.like.findFirst({
       where: { productId, userId },
     });
@@ -51,10 +52,12 @@ export class LikesService {
       );
     }
 
-    await this.prisma.like.delete({
+    const removedLike = await this.prisma.like.delete({
       where: { id: likeExist.id },
     });
 
     await this.productService.updateLikes(productId, 'decrease');
+
+    return removedLike;
   }
 }
