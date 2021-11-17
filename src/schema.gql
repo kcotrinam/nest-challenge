@@ -10,6 +10,20 @@ type CategoryModel {
   updatedAt: DateTime
 }
 
+type CategoryModelEdge {
+  cursor: Int!
+  node: CategoryModel!
+}
+
+type CategoryModelPageInfo {
+  nextPage: Int
+  page: Int
+  perPage: Int
+  prevPage: Int
+  total: Int
+  totalPages: Int
+}
+
 input CreateCategoryModel {
   name: String!
 }
@@ -94,6 +108,11 @@ type OrderProductModel {
   updatedAt: DateTime
 }
 
+type PaginatedCategories {
+  edges: [CategoryModelEdge!]
+  pageInfo: CategoryModelPageInfo
+}
+
 type ProductModel {
   categoryId: Float!
   createdAt: DateTime!
@@ -109,7 +128,7 @@ type ProductModel {
 }
 
 type Query {
-  categories(page: Int!, perPage: Int!): [CategoryModel!]!
+  categories(page: Int = 1, perPage: Float = 10): PaginatedCategories!
   category(id: Int!): CategoryModel!
   disabledProducts(page: Int!, perPage: Int!): [ProductModel!]!
   order(id: Int!): OrderModel!
