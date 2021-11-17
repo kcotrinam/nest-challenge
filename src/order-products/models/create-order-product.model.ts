@@ -5,8 +5,8 @@ export class CreateOrderProductModel {
   @Field()
   quantity: number;
 
-  @Field()
-  total: number;
+  // @Field()
+  // total: number;
 
   @Field()
   order: number;

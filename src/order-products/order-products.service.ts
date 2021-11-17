@@ -39,7 +39,7 @@ export class OrderProductsService {
     const orderProduct = await this.prisma.orderProduct.create({
       data: {
         ...input,
-        total: product.price,
+        total: product.price * input.quantity,
         order: {
           connect: {
             id: orderId,

@@ -29,7 +29,6 @@ input CreateOrderProductModel {
   order: Float!
   product: Float!
   quantity: Float!
-  total: Float!
 }
 
 input CreateProductModel {
