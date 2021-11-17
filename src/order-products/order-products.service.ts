@@ -80,7 +80,7 @@ export class OrderProductsService {
         id,
       },
     });
-
+    console.log(deletedOrderProduct);
     return deletedOrderProduct;
   }
 }

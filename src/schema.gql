@@ -22,7 +22,6 @@ input CreateLikeModel {
 input CreateOrderModel {
   isPaid: Boolean!
   total: Float!
-  user: Float!
 }
 
 input CreateOrderProductModel {
@@ -46,7 +45,6 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 input DeleteOrderProductModel {
-  id: Float!
   order: Float!
   product: Float!
 }
@@ -63,11 +61,11 @@ type Mutation {
   createCategory(input: CreateCategoryModel!): CategoryModel!
   createLike(input: CreateLikeModel!): LikeModel!
   createOrder(input: CreateOrderModel!): OrderModel!
-  createOrderProduct(input: CreateOrderProductModel!, userId: Int!): OrderProductModel!
+  createOrderProduct(input: CreateOrderProductModel!): OrderProductModel!
   createProduct(categoryId: Int!, input: CreateProductModel!): ProductModel!
   deleteOrderProduct(input: DeleteOrderProductModel!): OrderProductModel!
   removeCategory(id: Int!): CategoryModel!
-  removeOrder(id: Int!, userId: Int!): OrderModel!
+  removeOrder(id: Int!): OrderModel!
   removeProduct(id: Int!): ProductModel!
   signIn(input: SigninInput!): TokenModel!
   signUp(input: SignupInput!): UserModel!
@@ -116,7 +114,7 @@ type Query {
   disabledProducts(page: Int!, perPage: Int!): [ProductModel!]!
   order(id: Int!): OrderModel!
   orders(page: Int!, perPage: Int!): [OrderModel!]!
-  ownOrders(page: Int!, perPage: Int!, userId: Int!): [OrderModel!]!
+  ownOrders(page: Int!, perPage: Int!): [OrderModel!]!
   product(id: Int!): ProductModel!
   products(page: Int!, perPage: Int!): [ProductModel!]!
   user(id: Int!): [UserModel!]!
@@ -149,7 +147,6 @@ input UpdateOrderModel {
   id: Float!
   isPaid: Boolean
   total: Float
-  userId: Float!
 }
 
 input UpdateProductModel {

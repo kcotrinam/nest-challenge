@@ -6,14 +6,9 @@ export class UpdateOrderModel {
   @Field()
   id: number;
 
-  @Field()
-  userId: number;
-
   @Field({ nullable: true })
   total?: number;
 
   @Field({ nullable: true })
   isPaid?: boolean;
-  // @Field((type) => [OrderProductModel])
-  // orderItems: OrderProductModel[];
 }

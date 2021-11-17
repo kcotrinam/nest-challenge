@@ -73,11 +73,7 @@ export class OrdersService {
     return plainToClass(OrderDto, order);
   }
 
-  async update(
-    id: number,
-    currentUser: number,
-    input: UpdateOrderDto,
-  ): Promise<OrderDto> {
+  async update(id: number, currentUser: number, input: UpdateOrderDto) {
     const order = await this.prisma.order.count({
       where: {
         id,

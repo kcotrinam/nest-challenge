@@ -1,4 +1,9 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Resolver, Mutation, Int } from '@nestjs/graphql';
+import { CurrentUser } from '../../auth/decorators/curret-user.decorator';
+import { CurrentUserGuard } from '../../auth/guards/curretn-user.guard';
+import { GqlAuthGuard } from '../../auth/guards/gql-auth.guard';
+import { RolesGuard } from '../../auth/guards/role.guard';
 import { CreateOrderProductModel } from '../models/create-order-product.model';
 import { DeleteOrderProductModel } from '../models/delete-order-product.model';
 import { OrderProductModel } from '../models/order-products.model';
@@ -9,26 +14,32 @@ export class OrderProductResolver {
   constructor(private readonly orderProductsService: OrderProductsService) {}
 
   @Mutation(() => OrderProductModel)
+  @UseGuards(GqlAuthGuard, RolesGuard, CurrentUserGuard)
   async createOrderProduct(
-    @Args('userId', { type: () => Int }) userId: number,
+    @CurrentUser() user,
     @Args('input') input: CreateOrderProductModel,
   ) {
     const orderProduct = await this.orderProductsService.create(
       input,
       input.order,
       input.product,
-      userId,
+      user.id,
     );
     return orderProduct;
   }
 
   @Mutation(() => OrderProductModel)
-  async deleteOrderProduct(@Args('input') input: DeleteOrderProductModel) {
+  @UseGuards(GqlAuthGuard, RolesGuard, CurrentUserGuard)
+  async deleteOrderProduct(
+    @CurrentUser() user,
+    @Args('input') input: DeleteOrderProductModel,
+  ) {
     const deletedOrderProduct = await this.orderProductsService.delete(
       input.order,
       input.product,
-      input.id,
+      user.id,
     );
+
     return deletedOrderProduct;
   }
 }
