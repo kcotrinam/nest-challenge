@@ -38,7 +38,6 @@ export class CategoriesResolver {
     @CurrentUser() user,
     @Args('input') input: CreateCategoryModel,
   ) {
-    console.log(user);
     const category = await this.categoriesService.create(input, user);
 
     return category;

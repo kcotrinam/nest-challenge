@@ -36,7 +36,6 @@ export class LikesService {
     });
 
     const like = await this.productService.updateLikes(productId, 'increase');
-    console.log(like);
     return like;
   }
 

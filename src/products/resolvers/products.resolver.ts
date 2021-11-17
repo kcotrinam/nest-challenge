@@ -40,6 +40,7 @@ export class ProductsResolver {
   @Query(() => ProductModel)
   async product(@Args('id', { type: () => Int }) id: number) {
     const product = await this.productsService.findOne(id);
+
     return product;
   }
 
@@ -49,19 +50,21 @@ export class ProductsResolver {
     @Args('input') input: CreateProductModel,
   ) {
     const product = await this.productsService.create(input, categoryId, true);
+
     return product;
   }
   //Update not working, waiting for revision
   @Mutation(() => ProductModel)
   async updateProduct(@Args('input') input: UpdateProductModel) {
     const product = await this.productsService.update(input.id, input, true);
-    console.log(product);
+
     return product;
   }
   //Update not working, waiting for revision
   @Mutation(() => ProductModel)
   async removeProduct(@Args('id', { type: () => Int }) id: number) {
     const deletedProduct = await this.productsService.remove(id, true);
+
     return deletedProduct;
   }
 }

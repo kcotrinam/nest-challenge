@@ -27,6 +27,7 @@ export class OrdersResolver {
       },
       user,
     );
+
     return orders.data;
   }
 
@@ -37,6 +38,7 @@ export class OrdersResolver {
     @Args('input') input: CreateOrderModel,
   ) {
     const order = await this.ordersService.create(user.id, input);
+
     return order;
   }
 
@@ -54,12 +56,14 @@ export class OrdersResolver {
       },
       user.id,
     );
+
     return ownOrders;
   }
 
   @Query(() => OrderModel)
   async order(@Args('id', { type: () => Int }) id: number) {
     const order = await this.ordersService.findOne(id);
+
     return order;
   }
 
@@ -74,6 +78,7 @@ export class OrdersResolver {
       user.id,
       input,
     );
+
     return updatedOrder;
   }
 
@@ -83,8 +88,8 @@ export class OrdersResolver {
     @CurrentUser() user,
     @Args('id', { type: () => Int }) id: number,
   ) {
-    console.log(user, id);
     const deletedOrder = await this.ordersService.delete(id, user.id);
+
     return deletedOrder;
   }
 }

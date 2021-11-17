@@ -39,7 +39,6 @@ export class AttachmentService {
   }
 
   async generatePresignedUrl(key: string) {
-    console.log(key);
     const s3 = new S3();
 
     try {
