@@ -53,7 +53,7 @@ export class OrdersService {
     return plainToClass(OrderDto, orders);
   }
 
-  async create(userId: number, order: CreateOrderDto): Promise<OrderDto> {
+  async create(userId: number, order: CreateOrderDto) {
     const createdOrder = await this.prisma.order.create({
       data: {
         ...order,
@@ -64,11 +64,10 @@ export class OrdersService {
         },
       },
     });
-
     return plainToClass(OrderDto, createdOrder);
   }
 
-  async findOne(id: number): Promise<OrderDto> {
+  async findOne(id: number) {
     const order = await this.prisma.order.findUnique({ where: { id } });
 
     return plainToClass(OrderDto, order);
@@ -95,7 +94,7 @@ export class OrdersService {
 
     const updatedOrder = await this.prisma.order.update({
       where: { id },
-      data: input,
+      data: { ...input },
     });
 
     return plainToClass(OrderDto, updatedOrder);

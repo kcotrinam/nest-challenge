@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class OrderProductModel {
   @Field()
-  id: string;
+  id: number;
 
   @Field()
   quantity: number;
@@ -12,10 +12,10 @@ export class OrderProductModel {
   total: number;
 
   @Field()
-  orderId: string;
+  orderId: number;
 
   @Field()
-  productId: string;
+  productId: number;
 
   @Field()
   createdAt: Date;

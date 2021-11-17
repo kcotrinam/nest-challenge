@@ -18,7 +18,7 @@ export class OrderProductsService {
     orderId: number,
     productId: number,
     userId: number,
-  ): Promise<void> {
+  ) {
     const order = await this.orderService.findOne(orderId);
     const product = await this.productService.findOne(productId);
 
@@ -36,9 +36,10 @@ export class OrderProductsService {
       );
     }
 
-    await this.prisma.orderProduct.create({
+    const orderProduct = await this.prisma.orderProduct.create({
       data: {
         ...input,
+        total: product.price,
         order: {
           connect: {
             id: orderId,
@@ -51,9 +52,11 @@ export class OrderProductsService {
         },
       },
     });
+
+    return orderProduct;
   }
 
-  async delete(orderId: number, productId: number, id: number): Promise<void> {
+  async delete(orderId: number, productId: number, id: number) {
     const orderProduct = await this.prisma.orderProduct.findFirst({
       where: {
         order: {
@@ -72,10 +75,12 @@ export class OrderProductsService {
       );
     }
 
-    await this.prisma.orderProduct.delete({
+    const deletedOrderProduct = await this.prisma.orderProduct.delete({
       where: {
         id,
       },
     });
+
+    return deletedOrderProduct;
   }
 }

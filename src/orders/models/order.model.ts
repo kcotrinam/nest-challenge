@@ -4,7 +4,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class OrderModel {
   @Field()
-  id: string;
+  id: number;
 
   @Field()
   total: number;

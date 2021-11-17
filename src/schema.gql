@@ -25,6 +25,13 @@ input CreateOrderModel {
   user: Float!
 }
 
+input CreateOrderProductModel {
+  order: Float!
+  product: Float!
+  quantity: Float!
+  total: Float!
+}
+
 input CreateProductModel {
   description: String
   image: String
@@ -39,6 +46,12 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeleteOrderProductModel {
+  id: Float!
+  order: Float!
+  product: Float!
+}
+
 type LikeModel {
   createdAt: DateTime!
   id: String!
@@ -51,7 +64,9 @@ type Mutation {
   createCategory(input: CreateCategoryModel!): CategoryModel!
   createLike(input: CreateLikeModel!): LikeModel!
   createOrder(input: CreateOrderModel!): OrderModel!
+  createOrderProduct(input: CreateOrderProductModel!, userId: Int!): OrderProductModel!
   createProduct(categoryId: Int!, input: CreateProductModel!): ProductModel!
+  deleteOrderProduct(input: DeleteOrderProductModel!): OrderProductModel!
   removeCategory(id: Int!): CategoryModel!
   removeOrder(id: Int!, userId: Int!): OrderModel!
   removeProduct(id: Int!): ProductModel!
@@ -65,18 +80,28 @@ type Mutation {
 
 type OrderModel {
   createdAt: DateTime
-  id: String!
+  id: Float!
   isPaid: Boolean!
   total: Float!
   updatedAt: DateTime
   userId: Float!
 }
 
+type OrderProductModel {
+  createdAt: DateTime!
+  id: Float!
+  orderId: Float!
+  productId: Float!
+  quantity: Float!
+  total: Float!
+  updatedAt: DateTime
+}
+
 type ProductModel {
   categoryId: Float!
   createdAt: DateTime!
   description: String!
-  id: String!
+  id: Float!
   image: String!
   isDisabled: Boolean
   likeCounter: Float!

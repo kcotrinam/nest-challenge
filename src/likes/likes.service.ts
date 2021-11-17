@@ -28,19 +28,16 @@ export class LikesService {
 
     if (likeExist) return;
 
-    const like = await this.prisma.like.create({
+    await this.prisma.like.create({
       data: {
         product: { connect: { id: productId } },
         user: { connect: { id: userId } },
       },
     });
 
-    const likedProduct = await this.productService.updateLikes(
-      productId,
-      'increase',
-    );
-    console.log(like, likedProduct);
-    return likedProduct;
+    const like = await this.productService.updateLikes(productId, 'increase');
+    console.log(like);
+    return like;
   }
 
   async remove(productId: number, userId: number): Promise<void> {

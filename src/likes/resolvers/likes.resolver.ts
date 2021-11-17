@@ -10,7 +10,7 @@ export class LikesResolver {
   @Mutation(() => LikeModel)
   async createLike(@Args('input') input: CreateLikeModel) {
     const like = await this.likesService.create(input.productId, input.userId);
-    console.log(like);
+    console.log('resolver', like, typeof input.productId, input.productId);
     return like;
   }
 }

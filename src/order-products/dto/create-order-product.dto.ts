@@ -1,5 +1,5 @@
 import { Expose, Exclude } from 'class-transformer';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 @Exclude()
 export class CreateOrderProductDto {
@@ -7,8 +7,8 @@ export class CreateOrderProductDto {
   @IsNotEmpty()
   readonly quantity: number;
 
-  @Expose()
-  @IsNotEmpty()
-  @IsNumber()
-  readonly total: number;
+  // @Expose()
+  // @IsNotEmpty()
+  // @IsNumber()
+  // readonly total: number;
 }
