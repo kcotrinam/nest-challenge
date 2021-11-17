@@ -7,6 +7,10 @@ import { CreateUserDto } from '../users/dtos/request/create-user.dto';
 import { AuthService } from './auth.service';
 import { VerifyEmailDto } from './dtos/verify-email.dto';
 import { SignInDto } from './dtos/sign-in.dto';
+import { UsersModule } from '../users/users.module';
+import { UsersService } from '../users/users.service';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { SendgridModule } from '../sendgrid/sendgrid.module';
 
 const fakeUserOne = {
   name: 'fake name 1',
@@ -22,11 +26,27 @@ describe('AuthService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService, PrismaService, TokensService],
+      imports: [
+        UsersModule,
+        SendgridModule,
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          signOptions: { expiresIn: '60h' },
+        }),
+      ],
+      providers: [
+        AuthService,
+        PrismaService,
+        TokensService,
+        UsersService,
+        // JwtService,
+      ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
     prisma = module.get<PrismaService>(PrismaService);
+    module.get<TokensService>(TokensService);
+    module.get<UsersService>(UsersService);
 
     await prisma.token.deleteMany({});
     await prisma.user.deleteMany({});
@@ -75,7 +95,7 @@ describe('AuthService', () => {
 
       const result = await service.signIn(dto);
 
-      expect(result).toHaveProperty('token');
+      expect(result).toHaveProperty('accessToken');
     });
 
     it('should throw an exception if user is not found', async () => {

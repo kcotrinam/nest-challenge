@@ -17,13 +17,6 @@ export class SendgridService {
       html: `confirm your email with the following token: <b>${message.token}</b><br><br>`,
     };
 
-    sgMail
-      .send(msg)
-      .then(() => {
-        console.log('email sent');
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    sgMail.send(msg);
   }
 }
