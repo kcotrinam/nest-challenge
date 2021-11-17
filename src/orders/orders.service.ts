@@ -114,4 +114,26 @@ export class OrdersService {
     const deletedOrder = await this.prisma.order.delete({ where: { id } });
     return deletedOrder;
   }
+
+  async findAllProducts(id: number) {
+    const order = await this.prisma.order.findUnique({ where: { id } });
+    const chartList = await this.prisma.orderProduct.findMany({
+      where: {
+        orderId: id,
+      },
+    });
+
+    const products = await Promise.all(
+      chartList.map(async (chart) => {
+        const product = await this.prisma.product.findUnique({
+          where: {
+            id: chart.productId,
+          },
+        });
+        return product;
+      }),
+    );
+
+    return products;
+  }
 }
