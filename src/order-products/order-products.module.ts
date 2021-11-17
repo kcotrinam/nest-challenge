@@ -6,7 +6,7 @@ import { OrdersService } from '../orders/orders.service';
 import { ProductsService } from '../products/products.service';
 import { AttachmentService } from '../attachment/attachment.service';
 import { OrderProductResolver } from './resolvers/order-products.resolver';
-import { TokensService } from 'src/tokens/tokens.service';
+import { TokensService } from '../tokens/tokens.service';
 
 @Module({
   controllers: [OrderProductsController],

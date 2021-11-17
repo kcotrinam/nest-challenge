@@ -70,7 +70,7 @@ export class OrdersResolver {
 
   @Query(() => [ProductModel])
   async cartList(@Args('id', { type: () => Int }) id: number) {
-    const productList = await this.ordersService.findAllProducts(id);
+    const productList = await this.ordersService.findAllOrderProducts(id);
 
     return productList;
   }

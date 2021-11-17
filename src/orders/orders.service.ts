@@ -36,19 +36,11 @@ export class OrdersService {
   }
 
   async findOwnOrders(paginationQuery: PaginationQueryDto, userId: number) {
-    const { page, perPage } = paginationQuery;
-    const { skip, take } = paginatedHelper(paginationQuery);
-
-    const total = await this.prisma.order.count();
     const orders = await this.prisma.order.findMany({
       where: {
         userId,
       },
-      skip,
-      take,
     });
-
-    const pageInfo = paginationSerializer(total, { page, perPage });
 
     return plainToClass(OrderDto, orders);
   }
@@ -115,8 +107,14 @@ export class OrdersService {
     return deletedOrder;
   }
 
-  async findAllProducts(id: number) {
+  async findAllOrderProducts(id: number) {
     const order = await this.prisma.order.findUnique({ where: { id } });
+    if (!order) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_FOUND, 'ORDER NOT FOUND'),
+        HttpStatus.NOT_FOUND,
+      );
+    }
     const chartList = await this.prisma.orderProduct.findMany({
       where: {
         orderId: id,
