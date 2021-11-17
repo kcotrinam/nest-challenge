@@ -8,6 +8,7 @@ import { OrdersService } from '../orders.service';
 import { OrderModel } from '../models/order.model';
 import { CreateOrderModel } from '../models/create-order.model';
 import { UpdateOrderModel } from '../models/update-order.model';
+import { ProductModel } from '../../products/models/products.model';
 
 @Resolver(() => OrderModel)
 export class OrdersResolver {
@@ -65,6 +66,13 @@ export class OrdersResolver {
     const order = await this.ordersService.findOne(id);
 
     return order;
+  }
+
+  @Query(() => [ProductModel])
+  async cartList(@Args('id', { type: () => Int }) id: number) {
+    const productList = await this.ordersService.findAllProducts(id);
+
+    return productList;
   }
 
   @Mutation(() => OrderModel)

@@ -109,6 +109,7 @@ type ProductModel {
 }
 
 type Query {
+  cartList(id: Int!): [ProductModel!]!
   categories(page: Int!, perPage: Int!): [CategoryModel!]!
   category(id: Int!): CategoryModel!
   disabledProducts(page: Int!, perPage: Int!): [ProductModel!]!
