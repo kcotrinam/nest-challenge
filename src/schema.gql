@@ -98,6 +98,20 @@ type OrderModel {
   userId: Float!
 }
 
+type OrderModelEdge {
+  cursor: Int!
+  node: OrderModel!
+}
+
+type OrderModelPageInfo {
+  nextPage: Int
+  page: Int
+  perPage: Int
+  prevPage: Int
+  total: Int
+  totalPages: Int
+}
+
 type OrderProductModel {
   createdAt: DateTime!
   id: Float!
@@ -111,6 +125,11 @@ type OrderProductModel {
 type PaginatedCategories {
   edges: [CategoryModelEdge!]
   pageInfo: CategoryModelPageInfo
+}
+
+type PaginatedOrders {
+  edges: [OrderModelEdge!]
+  pageInfo: OrderModelPageInfo
 }
 
 type ProductModel {
@@ -132,8 +151,8 @@ type Query {
   category(id: Int!): CategoryModel!
   disabledProducts(page: Int!, perPage: Int!): [ProductModel!]!
   order(id: Int!): OrderModel!
-  orders(page: Int!, perPage: Int!): [OrderModel!]!
-  ownOrders(page: Int!, perPage: Int!): [OrderModel!]!
+  orders(page: Int!, perPage: Int!): PaginatedOrders!
+  ownOrders(page: Int!, perPage: Int!): PaginatedOrders!
   product(id: Int!): ProductModel!
   products(page: Int!, perPage: Int!): [ProductModel!]!
   user(id: Int!): [UserModel!]!

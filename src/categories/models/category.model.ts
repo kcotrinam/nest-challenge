@@ -21,4 +21,4 @@ export class CategoryModel {
 }
 
 @ObjectType()
-export class PaginatedCategories extends CursorPaginated(CategoryModel){}
+export class PaginatedCategories extends CursorPaginated(CategoryModel) {}

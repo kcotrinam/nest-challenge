@@ -1,12 +1,6 @@
 import { Type } from '@nestjs/common';
 import { ArgsType, Field, Int, ObjectType } from '@nestjs/graphql';
-import {
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsPositive,
-  IsString,
-} from 'class-validator';
+import { IsNumber, IsOptional, IsPositive } from 'class-validator';
 
 export class Pagination {
   page?: number;
