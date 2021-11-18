@@ -5,7 +5,7 @@ import { CurrentUserGuard } from '../../auth/guards/curretn-user.guard';
 import { GqlAuthGuard } from '../../auth/guards/gql-auth.guard';
 import { RolesGuard } from '../../auth/guards/role.guard';
 import { OrdersService } from '../orders.service';
-import { OrderModel } from '../models/order.model';
+import { OrderModel, PaginatedOrders } from '../models/order.model';
 import { CreateOrderModel } from '../models/create-order.model';
 import { UpdateOrderModel } from '../models/update-order.model';
 import { ProductModel } from '../../products/models/products.model';
@@ -14,7 +14,7 @@ import { ProductModel } from '../../products/models/products.model';
 export class OrdersResolver {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Query(() => [OrderModel])
+  @Query(() => PaginatedOrders)
   @UseGuards(GqlAuthGuard, RolesGuard, CurrentUserGuard)
   async orders(
     @CurrentUser() user,
@@ -27,9 +27,10 @@ export class OrdersResolver {
         perPage,
       },
       user,
+      false,
     );
 
-    return orders.data;
+    return orders;
   }
 
   @Mutation(() => OrderModel)
@@ -43,7 +44,7 @@ export class OrdersResolver {
     return order;
   }
 
-  @Query(() => [OrderModel])
+  @Query(() => PaginatedOrders)
   @UseGuards(GqlAuthGuard, RolesGuard, CurrentUserGuard)
   async ownOrders(
     @CurrentUser() user,
@@ -56,6 +57,7 @@ export class OrdersResolver {
         perPage,
       },
       user.id,
+      false,
     );
 
     return ownOrders;

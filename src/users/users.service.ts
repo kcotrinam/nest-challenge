@@ -7,12 +7,14 @@ import { paginatedHelper } from '../pagination/pagination.helper';
 import { paginationSerializer } from '../pagination/serializer';
 import { errorMessage } from '../utils/error-message-constructor';
 import { User } from '.prisma/client';
+import { getEdges } from '../utils/args/pagination.args';
+import { UserModel } from './models/users.model';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(paginationQuery: PaginationQueryDto) {
+  async findAll(paginationQuery: PaginationQueryDto, isRestLayer = true) {
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
     const total = await this.prisma.user.count();
@@ -21,6 +23,13 @@ export class UsersService {
       skip,
       take,
     });
+
+    if (!isRestLayer) {
+      const edges = getEdges(plainToClass(UserModel, users));
+
+      return { edges, pageInfo };
+    }
+
     return { data: plainToClass(UserDto, users), pageInfo };
   }
 

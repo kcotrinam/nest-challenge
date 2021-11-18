@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
+import { getEdges } from 'src/utils/args/pagination.args';
 import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from '../pagination/pagination.helper';
 import { paginationSerializer } from '../pagination/serializer';
@@ -8,12 +9,17 @@ import { errorMessage } from '../utils/error-message-constructor';
 import { CreateOrderDto } from './dto/request/create-order.dto';
 import { UpdateOrderDto } from './dto/request/update-order.dto';
 import { OrderDto } from './dto/response/order.dto';
+import { OrderModel } from './models/order.model';
 
 @Injectable()
 export class OrdersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(paginationQuery: PaginationQueryDto, userRole: boolean) {
+  async findAll(
+    paginationQuery: PaginationQueryDto,
+    userRole: boolean,
+    isRestLayer = true,
+  ) {
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
 
@@ -32,15 +38,39 @@ export class OrdersService {
 
     const pageInfo = paginationSerializer(total, { page, perPage });
 
+    if (!isRestLayer) {
+      const edges = getEdges(plainToClass(OrderModel, orders));
+
+      return { edges, pageInfo };
+    }
+
     return { pageInfo, data: plainToClass(OrderDto, orders) };
   }
 
-  async findOwnOrders(paginationQuery: PaginationQueryDto, userId: number) {
+  async findOwnOrders(
+    paginationQuery: PaginationQueryDto,
+    userId: number,
+    isRestLayer = true,
+  ) {
+    const { page, perPage } = paginationQuery;
+    const { skip, take } = paginatedHelper(paginationQuery);
+
+    const total = await this.prisma.order.count();
     const orders = await this.prisma.order.findMany({
       where: {
         userId,
       },
+      skip,
+      take,
     });
+
+    const pageInfo = paginationSerializer(total, { page, perPage });
+
+    if (!isRestLayer) {
+      const edges = getEdges(plainToClass(OrderModel, orders));
+
+      return { edges, pageInfo };
+    }
 
     return plainToClass(OrderDto, orders);
   }

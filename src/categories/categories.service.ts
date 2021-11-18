@@ -8,12 +8,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from '../pagination/pagination.helper';
 import { paginationSerializer } from '../pagination/serializer';
+import { getEdges } from 'src/utils/args/pagination.args';
+import { CategoryModel } from './models/category.model';
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findAll(paginationQuery: PaginationQueryDto) {
+  async findAll(paginationQuery: PaginationQueryDto, isRestLayer = true) {
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
     const total = await this.prismaService.category.count();
@@ -23,6 +25,11 @@ export class CategoriesService {
       take,
     });
 
+    if (!isRestLayer) {
+      const edges = getEdges(plainToClass(CategoryModel, categories));
+
+      return { edges, pageInfo };
+    }
     return { pageInfo, data: plainToClass(CategoryDto, categories) };
   }
 

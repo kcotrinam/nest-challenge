@@ -10,6 +10,20 @@ type CategoryModel {
   updatedAt: DateTime
 }
 
+type CategoryModelEdge {
+  cursor: Int!
+  node: CategoryModel!
+}
+
+type CategoryModelPageInfo {
+  nextPage: Int
+  page: Int
+  perPage: Int
+  prevPage: Int
+  total: Int
+  totalPages: Int
+}
+
 input CreateCategoryModel {
   name: String!
 }
@@ -85,6 +99,20 @@ type OrderModel {
   userId: Float!
 }
 
+type OrderModelEdge {
+  cursor: Int!
+  node: OrderModel!
+}
+
+type OrderModelPageInfo {
+  nextPage: Int
+  page: Int
+  perPage: Int
+  prevPage: Int
+  total: Int
+  totalPages: Int
+}
+
 type OrderProductModel {
   createdAt: DateTime!
   id: Float!
@@ -93,6 +121,26 @@ type OrderProductModel {
   quantity: Float!
   total: Float!
   updatedAt: DateTime
+}
+
+type PaginatedCategories {
+  edges: [CategoryModelEdge!]
+  pageInfo: CategoryModelPageInfo
+}
+
+type PaginatedOrders {
+  edges: [OrderModelEdge!]
+  pageInfo: OrderModelPageInfo
+}
+
+type PaginatedProducts {
+  edges: [ProductModelEdge!]
+  pageInfo: ProductModelPageInfo
+}
+
+type PaginatedUsers {
+  edges: [UserModelEdge!]
+  pageInfo: UserModelPageInfo
 }
 
 type ProductModel {
@@ -109,18 +157,31 @@ type ProductModel {
   updatedAt: DateTime
 }
 
+type ProductModelEdge {
+  cursor: Int!
+  node: ProductModel!
+}
+
+type ProductModelPageInfo {
+  nextPage: Int
+  page: Int
+  perPage: Int
+  prevPage: Int
+  total: Int
+  totalPages: Int
+}
+
 type Query {
-  cartList(id: Int!): [ProductModel!]!
-  categories(page: Int!, perPage: Int!): [CategoryModel!]!
+  categories(page: Int = 1, perPage: Float = 10): PaginatedCategories!
   category(id: Int!): CategoryModel!
-  disabledProducts(page: Int!, perPage: Int!): [ProductModel!]!
+  disabledProducts(page: Int!, perPage: Int!): PaginatedProducts!
   order(id: Int!): OrderModel!
-  orders(page: Int!, perPage: Int!): [OrderModel!]!
-  ownOrders(page: Int!, perPage: Int!): [OrderModel!]!
+  orders(page: Int!, perPage: Int!): PaginatedOrders!
+  ownOrders(page: Int!, perPage: Int!): PaginatedOrders!
   product(id: Int!): ProductModel!
-  products(page: Int!, perPage: Int!): [ProductModel!]!
+  products(page: Int!, perPage: Int!): PaginatedProducts!
   user(id: Int!): [UserModel!]!
-  users(page: Int!, perPage: Int!): [UserModel!]!
+  users(page: Int!, perPage: Int!): PaginatedUsers!
 }
 
 input SigninInput {
@@ -168,6 +229,20 @@ type UserModel {
   isManager: Boolean!
   lastname: String!
   name: String!
+}
+
+type UserModelEdge {
+  cursor: Int!
+  node: UserModel!
+}
+
+type UserModelPageInfo {
+  nextPage: Int
+  page: Int
+  perPage: Int
+  prevPage: Int
+  total: Int
+  totalPages: Int
 }
 
 input VerifyEmailInput {

@@ -1,5 +1,5 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { ProductModel } from '../models/products.model';
+import { PaginatedProducts, ProductModel } from '../models/products.model';
 import { ProductsService } from '../products.service';
 import { CreateProductModel } from '../models/create-product.model';
 import { UpdateProductModel } from '../models/update-product.model';
@@ -8,20 +8,23 @@ import { UpdateProductModel } from '../models/update-product.model';
 export class ProductsResolver {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Query(() => [ProductModel])
+  @Query(() => PaginatedProducts)
   async products(
     @Args('page', { type: () => Int }) page: number,
     @Args('perPage', { type: () => Int }) perPage: number,
   ) {
-    const products = await this.productsService.findAll({
-      page,
-      perPage,
-    });
+    const products = await this.productsService.findAll(
+      {
+        page,
+        perPage,
+      },
+      false,
+    );
 
-    return products.data;
+    return products;
   }
 
-  @Query(() => [ProductModel])
+  @Query(() => PaginatedProducts)
   async disabledProducts(
     @Args('page', { type: () => Int }) page: number,
     @Args('perPage', { type: () => Int }) perPage: number,
@@ -32,9 +35,10 @@ export class ProductsResolver {
         perPage,
       },
       true,
+      false,
     );
 
-    return products.data;
+    return products;
   }
 
   @Query(() => ProductModel)
