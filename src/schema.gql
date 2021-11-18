@@ -132,6 +132,16 @@ type PaginatedOrders {
   pageInfo: OrderModelPageInfo
 }
 
+type PaginatedProducts {
+  edges: [ProductModelEdge!]
+  pageInfo: ProductModelPageInfo
+}
+
+type PaginatedUsers {
+  edges: [UserModelEdge!]
+  pageInfo: UserModelPageInfo
+}
+
 type ProductModel {
   categoryId: Float!
   createdAt: DateTime!
@@ -146,17 +156,31 @@ type ProductModel {
   updatedAt: DateTime
 }
 
+type ProductModelEdge {
+  cursor: Int!
+  node: ProductModel!
+}
+
+type ProductModelPageInfo {
+  nextPage: Int
+  page: Int
+  perPage: Int
+  prevPage: Int
+  total: Int
+  totalPages: Int
+}
+
 type Query {
   categories(page: Int = 1, perPage: Float = 10): PaginatedCategories!
   category(id: Int!): CategoryModel!
-  disabledProducts(page: Int!, perPage: Int!): [ProductModel!]!
+  disabledProducts(page: Int!, perPage: Int!): PaginatedProducts!
   order(id: Int!): OrderModel!
   orders(page: Int!, perPage: Int!): PaginatedOrders!
   ownOrders(page: Int!, perPage: Int!): PaginatedOrders!
   product(id: Int!): ProductModel!
-  products(page: Int!, perPage: Int!): [ProductModel!]!
+  products(page: Int!, perPage: Int!): PaginatedProducts!
   user(id: Int!): [UserModel!]!
-  users(page: Int!, perPage: Int!): [UserModel!]!
+  users(page: Int!, perPage: Int!): PaginatedUsers!
 }
 
 input SigninInput {
@@ -204,6 +228,20 @@ type UserModel {
   isManager: Boolean!
   lastname: String!
   name: String!
+}
+
+type UserModelEdge {
+  cursor: Int!
+  node: UserModel!
+}
+
+type UserModelPageInfo {
+  nextPage: Int
+  page: Int
+  perPage: Int
+  prevPage: Int
+  total: Int
+  totalPages: Int
 }
 
 input VerifyEmailInput {

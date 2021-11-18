@@ -10,6 +10,8 @@ import { plainToClass } from 'class-transformer';
 import { ProductDto } from './dto/product.dto';
 import { DetailedProductDto } from './dto/detailed-product.dto';
 import { errorMessage } from '../utils/error-message-constructor';
+import { getEdges } from 'src/utils/args/pagination.args';
+import { ProductModel } from './models/products.model';
 
 @Injectable()
 export class ProductsService {
@@ -47,7 +49,7 @@ export class ProductsService {
     return plainToClass(DetailedProductDto, newProduct);
   }
 
-  async findAll(paginationQuery: PaginationQueryDto) {
+  async findAll(paginationQuery: PaginationQueryDto, isRestLayer = true) {
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
     const total = await this.prismaService.product.count({
@@ -61,10 +63,20 @@ export class ProductsService {
       take,
     });
 
+    if (!isRestLayer) {
+      const edges = getEdges(plainToClass(ProductModel, products));
+
+      return { edges, pageInfo };
+    }
+
     return { pageInfo, data: plainToClass(ProductDto, products) };
   }
 
-  async findDisabled(paginationQuery: PaginationQueryDto, isManager: boolean) {
+  async findDisabled(
+    paginationQuery: PaginationQueryDto,
+    isManager: boolean,
+    isRestLayer = true,
+  ) {
     if (!isManager) {
       throw new HttpException(
         errorMessage(
@@ -87,6 +99,13 @@ export class ProductsService {
       skip,
       take,
     });
+
+    if (!isRestLayer) {
+      const edges = getEdges(plainToClass(ProductModel, products));
+
+      return { edges, pageInfo };
+    }
+
     return { pageInfo, data: plainToClass(DetailedProductDto, products) };
   }
 

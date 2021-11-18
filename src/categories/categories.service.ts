@@ -27,7 +27,7 @@ export class CategoriesService {
 
     if (!isRestLayer) {
       const edges = getEdges(plainToClass(CategoryModel, categories));
-      console.log('gql', pageInfo);
+
       return { edges, pageInfo };
     }
     return { pageInfo, data: plainToClass(CategoryDto, categories) };

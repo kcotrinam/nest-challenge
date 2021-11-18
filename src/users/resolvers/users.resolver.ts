@@ -4,14 +4,14 @@ import { CurrentUser } from '../../auth/decorators/curret-user.decorator';
 import { CurrentUserGuard } from '../../auth/guards/curretn-user.guard';
 import { GqlAuthGuard } from '../../auth/guards/gql-auth.guard';
 import { RolesGuard } from '../../auth/guards/role.guard';
-import { UserModel } from '../models/users.model';
+import { PaginatedUsers, UserModel } from '../models/users.model';
 import { UsersService } from '../users.service';
 
 @Resolver()
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query(() => [UserModel])
+  @Query(() => PaginatedUsers)
   @UseGuards(GqlAuthGuard, RolesGuard, CurrentUserGuard)
   async users(
     @CurrentUser() user,
@@ -19,12 +19,15 @@ export class UsersResolver {
     page: number,
     @Args('perPage', { type: () => Int }) perPage: number,
   ) {
-    const categories = await this.usersService.findAll({
-      page,
-      perPage,
-    });
+    const users = await this.usersService.findAll(
+      {
+        page,
+        perPage,
+      },
+      false,
+    );
 
-    return categories.data;
+    return users;
   }
 
   @Query(() => [UserModel])

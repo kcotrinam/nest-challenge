@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { CursorPaginated } from '../../utils/args/pagination.args';
 
 @ObjectType()
 export class UserModel {
@@ -23,3 +24,6 @@ export class UserModel {
   @Field()
   email: string;
 }
+
+@ObjectType()
+export class PaginatedUsers extends CursorPaginated(UserModel) {}

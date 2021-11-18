@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { CursorPaginated } from '../../utils/args/pagination.args';
 
 @ObjectType()
 export class ProductModel {
@@ -35,3 +36,6 @@ export class ProductModel {
   @Field({ nullable: true })
   updatedAt?: Date;
 }
+
+@ObjectType()
+export class PaginatedProducts extends CursorPaginated(ProductModel) {}
