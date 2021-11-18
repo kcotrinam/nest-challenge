@@ -44,10 +44,7 @@ export class CategoriesController {
     @Req() req,
     @Res() res,
   ) {
-    const newCategory = await this.categoriesService.create(
-      createCategoryDto,
-      req.currentUserRole,
-    );
+    const newCategory = await this.categoriesService.create(createCategoryDto);
 
     res.status(200).json(newCategory);
   }

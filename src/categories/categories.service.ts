@@ -8,12 +8,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from '../pagination/pagination.helper';
 import { paginationSerializer } from '../pagination/serializer';
-import { getEdges } from 'src/utils/args/pagination.args';
+import { getEdges } from '../utils/args/pagination.args';
 import { CategoryModel } from './models/category.model';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) {}
 
   async findAll(paginationQuery: PaginationQueryDto, isRestLayer = true) {
     const { page, perPage } = paginationQuery;
@@ -41,17 +41,7 @@ export class CategoriesService {
     return plainToClass(CategoryDto, category);
   }
 
-  async create(input: CreateCategoryDto, manager: boolean) {
-    if (!manager) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNAUTHORIZED,
-          error: 'ONLY MANAGERS CAN CREATE A NEW CATEGORY',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
+  async create(input: CreateCategoryDto) {
     const newCategory = await this.prismaService.category.create({
       data: input,
     });
@@ -59,15 +49,13 @@ export class CategoriesService {
     return plainToClass(CategoryDto, newCategory);
   }
 
-  async update(
-    id: number,
-    manager: boolean,
-    updateCategoryDto: UpdateCategoryDto,
-  ) {
-    if (!manager) {
+  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.findOne(id);
+
+    if (!category) {
       throw new HttpException(
-        errorMessage(HttpStatus.UNAUTHORIZED, 'YOU ARE NOT AUTHORIZED'),
-        HttpStatus.UNAUTHORIZED,
+        errorMessage(HttpStatus.NOT_FOUND, 'No Category found'),
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -79,14 +67,15 @@ export class CategoriesService {
     return plainToClass(CategoryDto, updatedCategory);
   }
 
-  async remove(id: number, manager: boolean) {
-    if (!manager) {
+  async remove(id: number) {
+    const category = await this.findOne(id);
+
+    if (!category) {
       throw new HttpException(
-        errorMessage(HttpStatus.UNAUTHORIZED, 'YOU ARE NOT AUTHORIZED'),
-        HttpStatus.UNAUTHORIZED,
+        errorMessage(HttpStatus.NOT_FOUND, 'No Category found'),
+        HttpStatus.NOT_FOUND,
       );
     }
-
     const deletedCategory = await this.prismaService.category.delete({
       where: { id },
     });

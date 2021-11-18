@@ -2,10 +2,22 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaModule } from '../prisma/prisma.module';
 import { PrismaService } from '../prisma/prisma.service';
 import { CategoriesService } from './categories.service';
+import * as faker from 'faker';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { plainToClass } from 'class-transformer';
+
+const fakeCategoryOne = {
+  name: faker.commerce.productMaterial(),
+};
+
+const fakeCategoryTwo = {
+  name: faker.commerce.productMaterial(),
+};
 
 describe('CategoriesService', () => {
   let categoriesService: CategoriesService;
   let prismaService: PrismaService;
+  let categoryOne;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -17,9 +29,17 @@ describe('CategoriesService', () => {
     prismaService = module.get<PrismaService>(PrismaService);
 
     await prismaService.clearDatabase();
+
+    categoryOne = await categoriesService.create(
+      plainToClass(CreateCategoryDto, fakeCategoryOne),
+    );
+    await categoriesService.create(
+      plainToClass(CreateCategoryDto, fakeCategoryTwo),
+    );
   });
 
   afterAll(async () => {
+    await prismaService.clearDatabase();
     await prismaService.$disconnect();
   });
 
@@ -27,67 +47,107 @@ describe('CategoriesService', () => {
     expect(categoriesService).toBeDefined();
   });
 
-  it('should prisma should be defined', () => {
-    expect(prismaService).toBeDefined();
-  });
+  describe('findAll', () => {
+    it('should return all categories', async () => {
+      const categories = await categoriesService.findAll({
+        page: 1,
+        perPage: 10,
+      });
 
-  it('should create a category', async () => {
-    const category = await categoriesService.create(
-      {
-        name: 'choclatey',
-      },
-      true,
-    );
-    expect(category).toHaveProperty('id');
-    expect(category).toHaveProperty('name');
-  });
-
-  it('should delete a category', async () => {
-    const category = await categoriesService.create(
-      {
-        name: 'choclatey',
-      },
-      true,
-    );
-    await categoriesService.remove(category.id, true);
-
-    expect(category.id).toBe(category.id);
-  });
-
-  it('should return a category by id', async () => {
-    const category = await categoriesService.create(
-      { name: 'choclatey' },
-      true,
-    );
-    const searchedCategory = await categoriesService.findOne(category.id);
-
-    expect(category.id).toBe(searchedCategory.id);
-  });
-
-  it('should throw an error if a category does not exists', async () => {
-    expect(async () => {
-      await categoriesService.findOne(99999);
-    }).rejects.toThrow();
-  });
-
-  it('should return all categories', async () => {
-    const categories = await categoriesService.findAll({
-      page: 1,
-      perPage: 10,
+      expect(categories).toHaveProperty('pageInfo');
+      expect(categories).toHaveProperty('data');
+      expect(categories.data).toHaveLength(2);
     });
 
-    expect(categories).toHaveProperty('pageInfo');
-    expect(categories).toHaveProperty('data');
+    it('should return three categories', async () => {
+      await categoriesService.create(
+        plainToClass(CreateCategoryDto, fakeCategoryTwo),
+      );
+      const categories = await categoriesService.findAll({
+        page: 1,
+        perPage: 10,
+      });
+
+      expect(categories.data).toHaveLength(3);
+    });
   });
 
-  it('should update a category', async () => {
-    const category = await prismaService.category.create({
-      data: { name: 'choclatey' },
+  describe('findOne', () => {
+    it('should return one category', async () => {
+      const category = await categoriesService.findOne(categoryOne.id);
+
+      expect(category).toHaveProperty('id');
+      expect(category).toHaveProperty('name');
+      expect(category.name).toEqual(categoryOne.name);
     });
-    const updateCategory = await categoriesService.update(category.id, true, {
-      name: 'new category',
+  });
+
+  describe('create', () => {
+    it('should create a category', async () => {
+      const category = await categoriesService.create(
+        plainToClass(CreateCategoryDto, fakeCategoryTwo),
+      );
+
+      expect(category).toHaveProperty('id');
+      expect(category).toHaveProperty('name');
+      expect(category.name).toEqual(fakeCategoryTwo.name);
     });
-    expect(updateCategory.id).toBe(category.id);
-    expect(updateCategory.name).not.toBe(category.name);
+  });
+
+  describe('update', () => {
+    it('should update a category', async () => {
+      const updatedCategory = await categoriesService.update(
+        categoryOne.id,
+        plainToClass(CreateCategoryDto, {
+          name: faker.commerce.productMaterial(),
+        }),
+      );
+
+      expect(updatedCategory).toHaveProperty('id');
+      expect(updatedCategory).toHaveProperty('name');
+      expect(updatedCategory.name).not.toBe(categoryOne.name);
+    });
+
+    it('should not update a category', async () => {
+      try {
+        await categoriesService.update(
+          9999,
+          plainToClass(CreateCategoryDto, {
+            name: faker.commerce.productMaterial(),
+          }),
+        );
+      } catch (error) {
+        expect(error.message).toEqual('No Category found');
+        expect(error.status).toEqual(404);
+      }
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete a category', async () => {
+      const deletedCategory = await categoriesService.remove(categoryOne.id);
+
+      expect(deletedCategory).toHaveProperty('id');
+      expect(deletedCategory.id).toEqual(categoryOne.id);
+    });
+
+    it('should have a length of 1', async () => {
+      await categoriesService.remove(categoryOne.id);
+      const categories = await categoriesService.findAll({
+        page: 1,
+        perPage: 10,
+      });
+
+      expect(categories.data).toHaveLength(1);
+    });
+
+    it('should not delete a category', async () => {
+      try {
+        await categoriesService.remove(9999);
+      } catch (error) {
+        expect(error.message).toEqual('No Category found');
+        expect(error.status).toEqual(404);
+      }
+    });
   });
 });
