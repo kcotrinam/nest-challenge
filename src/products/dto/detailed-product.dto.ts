@@ -12,6 +12,9 @@ export class DetailedProductDto {
   readonly description: string;
 
   @Expose()
+  readonly likeCounter: number;
+
+  @Expose()
   readonly isDisabled: boolean;
 
   @Expose()

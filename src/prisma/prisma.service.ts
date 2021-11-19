@@ -25,12 +25,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   async clearDatabase() {
-    await this.like.deleteMany({});
-    await this.product.deleteMany({});
     await this.token.deleteMany({});
     await this.user.deleteMany({});
-    await this.order.deleteMany({});
     await this.orderProduct.deleteMany({});
+    await this.order.deleteMany({});
+    await this.like.deleteMany({});
+    await this.product.deleteMany({});
     await this.category.deleteMany({});
   }
 }

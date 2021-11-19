@@ -10,7 +10,7 @@ import { plainToClass } from 'class-transformer';
 import { ProductDto } from './dto/product.dto';
 import { DetailedProductDto } from './dto/detailed-product.dto';
 import { errorMessage } from '../utils/error-message-constructor';
-import { getEdges } from 'src/utils/args/pagination.args';
+import { getEdges } from '../utils/args/pagination.args';
 import { ProductModel } from './models/products.model';
 
 @Injectable()
@@ -20,21 +20,7 @@ export class ProductsService {
     private readonly attachmentService: AttachmentService,
   ) {}
 
-  async create(
-    input: CreateProductDto,
-    categoryId: number,
-    isManager: boolean,
-  ) {
-    if (!isManager) {
-      throw new HttpException(
-        errorMessage(
-          HttpStatus.FORBIDDEN,
-          'ONLY MANAGERS CAN CREATE A NEW PRODUCT',
-        ),
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
+  async create(input: CreateProductDto, categoryId: number) {
     const newProduct = await this.prismaService.product.create({
       data: {
         name: input.name,
@@ -72,21 +58,7 @@ export class ProductsService {
     return { pageInfo, data: plainToClass(ProductDto, products) };
   }
 
-  async findDisabled(
-    paginationQuery: PaginationQueryDto,
-    isManager: boolean,
-    isRestLayer = true,
-  ) {
-    if (!isManager) {
-      throw new HttpException(
-        errorMessage(
-          HttpStatus.FORBIDDEN,
-          'ONLY MANAGERS CAN VIEW DISABLED PRODUCTS',
-        ),
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
+  async findDisabled(paginationQuery: PaginationQueryDto, isRestLayer = true) {
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
     const total = await this.prismaService.product.count({
@@ -124,18 +96,7 @@ export class ProductsService {
     return plainToClass(DetailedProductDto, product);
   }
 
-  async update(
-    id: number,
-    updateProductDto: UpdateProductDto,
-    isManager: boolean,
-  ) {
-    if (!isManager) {
-      throw new HttpException(
-        errorMessage(HttpStatus.FORBIDDEN, 'ONLY MANAGERS CAN UPDATE PRODUCTS'),
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
+  async update(id: number, updateProductDto: UpdateProductDto) {
     const updatedProduct = await this.prismaService.product.update({
       where: { id },
       data: updateProductDto,
@@ -162,45 +123,33 @@ export class ProductsService {
     }
   }
 
-  async remove(id: number, isManager: boolean) {
-    if (!isManager) {
-      throw new HttpException(
-        errorMessage(HttpStatus.FORBIDDEN, 'ONLY MANAGERS CAN DELETE PRODUCTS'),
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
-    try {
-      const deletedProduct = await this.prismaService.product.delete({
-        where: { id },
-      });
-      return deletedProduct;
-    } catch (error) {
-      throw new HttpException(
-        errorMessage(HttpStatus.NOT_FOUND, 'PRODUCT NOT FOUND'),
-        HttpStatus.NOT_FOUND,
-      );
-    }
-  }
-
-  async switchAvailability(id: number, isManager: boolean) {
-    if (!isManager) {
-      throw new HttpException(
-        errorMessage(
-          HttpStatus.FORBIDDEN,
-          'ONLY MANAGERS CAN CHANGE PRODUCTS AVAILABILITY',
-        ),
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
+  async remove(id: number) {
     const product = await this.prismaService.product.findUnique({
       where: { id },
     });
 
     if (!product) {
       throw new HttpException(
-        errorMessage(HttpStatus.NOT_FOUND, 'PRODUCT NOT FOUND'),
+        errorMessage(HttpStatus.FORBIDDEN, 'Not Found Product'),
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    const deletedProduct = await this.prismaService.product.delete({
+      where: { id },
+    });
+
+    return deletedProduct;
+  }
+
+  async switchAvailability(id: number) {
+    const product = await this.prismaService.product.findUnique({
+      where: { id },
+    });
+
+    if (!product) {
+      throw new HttpException(
+        errorMessage(HttpStatus.NOT_FOUND, 'No Product found'),
         HttpStatus.NOT_FOUND,
       );
     }

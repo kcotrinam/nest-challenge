@@ -1,11 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaModule } from '../prisma/prisma.module';
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from './products.service';
 import { AttachmentService } from '../attachment/attachment.service';
-import { paginationSerializer } from '../pagination/serializer';
+import * as faker from 'faker';
 import { CategoriesService } from '../categories/categories.service';
 import { HttpException } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
+import { UpdateProductDto } from './dto/update-product.dto';
+
+const fakeCategoryOne = {
+  name: faker.commerce.productName(),
+};
+
 const fakeProductOne = {
   name: 'Laptop HP',
   description: 'Best Laptop in the store',
@@ -26,6 +32,8 @@ describe('ProductsService', () => {
   let productsService: ProductsService;
   let prismaService: PrismaService;
   let categoriesService: CategoriesService;
+  let category;
+  let ProductOne;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,6 +50,10 @@ describe('ProductsService', () => {
     prismaService = module.get<PrismaService>(PrismaService);
 
     await prismaService.clearDatabase();
+
+    category = await categoriesService.create(fakeCategoryOne);
+
+    ProductOne = await productsService.create(fakeProductOne, category.id);
   });
 
   afterAll(async () => {
@@ -53,208 +65,139 @@ describe('ProductsService', () => {
     expect(productsService).toBeDefined();
   });
 
-  it('should prisma should be defined', () => {
-    expect(prismaService).toBeDefined();
-  });
+  describe('create', () => {
+    it('should create a product', async () => {
+      const product = await productsService.create(fakeProductTwo, category.id);
 
-  it('should create a product', async () => {
-    const category = await categoriesService.create(
-      {
-        name: '1',
-      },
-      true,
-    );
-
-    const product = await productsService.create(
-      fakeProductOne,
-      category.id,
-      true,
-    );
-    expect(product).toHaveProperty('id');
-    expect(product).toHaveProperty('name');
-  });
-
-  it('should delete a product', async () => {
-    const category = await categoriesService.create(
-      {
-        name: '1',
-      },
-      true,
-    );
-    const product = await productsService.create(
-      fakeProductOne,
-      category.id,
-      true,
-    );
-    await productsService.remove(product.id, true);
-    const searchProduct = await productsService.findOne(product.id);
-    expect(searchProduct).toBeNull();
-  });
-
-  it('should return a product by id', async () => {
-    const category = await categoriesService.create(
-      {
-        name: '1',
-      },
-      true,
-    );
-    const product = await productsService.create(
-      fakeProductOne,
-      category.id,
-      true,
-    );
-    const searchedProduct = await productsService.findOne(product.id);
-    expect(product.id).toBe(searchedProduct.id);
-  });
-
-  // it('should throw an error if a product does not exists', async () => {
-  //   expect(async () => {
-  //     await productsService.findOne(9999999);
-  //   }).rejects.toThrow(HttpException);
-  // });
-
-  it('should throw an error if you are not a manager and try to create a new product', async () => {
-    expect(async () => {
-      const category = await categoriesService.create(
-        {
-          name: '1',
-        },
-        true,
-      );
-      await productsService.create(fakeProductOne, category.id, false);
-    }).rejects.toThrow(HttpException);
-  });
-
-  it('should return all products', async () => {
-    const products = await productsService.findAll({
-      page: 1,
-      perPage: 10,
+      expect(product.name).toBe(fakeProductTwo.name);
+      expect(product.description).toBe(fakeProductTwo.description);
+      expect(product.price).toBe(fakeProductTwo.price);
+      expect(product.stock).toBe(fakeProductTwo.stock);
+      expect(product.categoryId).toBe(category.id);
     });
-
-    const paginate = paginationSerializer(1, { page: 1, perPage: 10 });
-
-    expect(paginate).toEqual({
-      take: 10,
-      skip: 0,
-    });
-    expect(products).toHaveProperty('pageInfo');
-    expect(products).toHaveProperty('data');
   });
 
-  it('should throw an error if a client try to find disabled products', async () => {
-    expect(
-      await productsService.findDisabled({ page: 1, perPage: 10 }, false),
-    ).rejects.toThrow(HttpException);
-  });
-
-  it('should return all disabled products', async () => {
-    const products = await productsService.findDisabled(
-      {
+  describe('findAll', () => {
+    it('should return all products', async () => {
+      const products = await productsService.findAll({
         page: 1,
         perPage: 10,
-      },
-      true,
-    );
+      });
 
-    const paginate = paginationSerializer(1, { page: 1, perPage: 10 });
-
-    expect(paginate).toEqual({
-      take: 10,
-      skip: 0,
+      expect(products.data).toHaveLength(1);
     });
-    expect(products).toHaveProperty('pageInfo');
-    expect(products).toHaveProperty('data');
+
+    it('should return 2 products', async () => {
+      await productsService.create(fakeProductTwo, category.id);
+      const products = await productsService.findAll({
+        page: 1,
+        perPage: 10,
+      });
+
+      expect(products.data).toHaveLength(2);
+    });
   });
 
-  it('should update a product', async () => {
-    const category = await categoriesService.create(
-      {
-        name: '1',
-      },
-      true,
-    );
-    const product = await productsService.create(
-      fakeProductOne,
-      category.id,
-      true,
-    );
-    const updateProduct = await productsService.update(
-      product.id,
-      fakeProductTwo,
-      true,
-    );
+  describe('findDisabled', () => {
+    it('should return all disabled products', async () => {
+      await productsService.create(
+        { ...fakeProductTwo, isDisabled: true },
+        category.id,
+      );
+      const products = await productsService.findDisabled({
+        page: 1,
+        perPage: 10,
+      });
 
-    expect(updateProduct).toHaveProperty('id');
+      expect(products.data).toHaveLength(1);
+    });
+
+    it('should return an empty array', async () => {
+      const products = await productsService.findDisabled({
+        page: 1,
+        perPage: 10,
+      });
+
+      expect(products.data).toHaveLength(0);
+    });
   });
 
-  it('should update a product', async () => {
-    const category = await categoriesService.create(
-      {
-        name: '1',
-      },
-      true,
-    );
-    const product = await productsService.create(
-      fakeProductOne,
-      category.id,
-      true,
-    );
-    expect(
-      await productsService.update(product.id, product, false),
-    ).rejects.toThrow(HttpException);
+  describe('findOne', () => {
+    it('should return a product', async () => {
+      const product = await productsService.findOne(ProductOne.id);
+
+      expect(product.name).toBe(fakeProductOne.name);
+      expect(product.description).toBe(fakeProductOne.description);
+      expect(product.price).toBe(fakeProductOne.price);
+      expect(product.stock).toBe(fakeProductOne.stock);
+    });
+
+    it('should return undefined', async () => {
+      try {
+        await productsService.findOne(2);
+      } catch (error) {
+        expect(error.status).toEqual(404);
+        expect(error.message).toEqual('No Product found');
+        expect(error).toBeInstanceOf(HttpException);
+      }
+    });
   });
 
-  it('should throw an error if a client try to delete products', async () => {
-    expect(await productsService.remove(1, false)).rejects.toThrow(
-      HttpException,
-    );
+  describe('update', () => {
+    it('should update a product', async () => {
+      const product = await productsService.update(
+        ProductOne.id,
+        plainToClass(UpdateProductDto, { name: 'Laptop HP' }),
+      );
+
+      expect(product.data.name).toBe('Laptop HP');
+      expect(product.data.description).toBe(fakeProductOne.description);
+      expect(product.data.price).toBe(fakeProductOne.price);
+      expect(product.data.stock).toBe(fakeProductOne.stock);
+    });
   });
 
-  it('should throw an error if try to delete unexisting product', async () => {
-    expect(async () => {
-      await productsService.remove(9999999, true);
-    }).rejects.toThrow(HttpException);
+  describe('delete', () => {
+    it('should delete a product', async () => {
+      const result = await productsService.remove(ProductOne.id);
+
+      expect(result.id).toBe(ProductOne.id);
+    });
   });
 
-  it('should increase a products like', async () => {
-    const category = await categoriesService.create(
-      {
-        name: '1',
-      },
-      true,
-    );
-    const product = await productsService.create(
-      fakeProductOne,
-      category.id,
-      true,
-    );
-    const likeIncreased = await productsService.updateLikes(
-      product.id,
-      'increase',
-    );
-    expect(likeIncreased).toHaveProperty('likeCounter');
+  describe('switchAvailability', () => {
+    it('should switch availability of a product', async () => {
+      const product = await productsService.switchAvailability(ProductOne.id);
+
+      expect(product.isDisabled).toBe(!ProductOne.isDisabled);
+    });
+
+    it('should throw an error', async () => {
+      try {
+        await productsService.switchAvailability(2);
+      } catch (error) {
+        expect(error.status).toEqual(404);
+        expect(error.message).toEqual('No Product found');
+        expect(error).toBeInstanceOf(HttpException);
+      }
+    });
   });
 
-  it('should throw an error if a client try to change a product availability', async () => {
-    expect(productsService.switchAvailability(1, false)).rejects.toThrow(
-      HttpException,
-    );
-  });
+  describe('updateLikes', () => {
+    it('should add a like of a product', async () => {
+      await productsService.updateLikes(ProductOne.id, 'increase');
+      const result = await productsService.findOne(ProductOne.id);
 
-  it('should change a products availability', async () => {
-    const category = await categoriesService.create(
-      {
-        name: '1',
-      },
-      true,
-    );
-    const product = await productsService.create(
-      fakeProductOne,
-      category.id,
-      true,
-    );
-    const currentStatus = product.isDisabled;
-    await productsService.switchAvailability(product.id, true);
-    expect(product.isDisabled).toBe(!currentStatus);
+      expect(result.likeCounter).toBe(ProductOne.likeCounter + 1);
+    });
+
+    it('should remove a like of a product', async () => {
+      await productsService.updateLikes(ProductOne.id, 'increase');
+      await productsService.updateLikes(ProductOne.id, 'increase');
+      await productsService.updateLikes(ProductOne.id, 'decrease');
+      const result = await productsService.findOne(ProductOne.id);
+
+      expect(result.likeCounter).toBe(ProductOne.likeCounter + 1);
+    });
   });
 });

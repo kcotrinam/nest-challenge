@@ -35,7 +35,6 @@ export class ProductsResolver {
         perPage,
       },
       true,
-      false,
     );
 
     return products;
@@ -53,21 +52,21 @@ export class ProductsResolver {
     @Args('categoryId', { type: () => Int }) categoryId: number,
     @Args('input') input: CreateProductModel,
   ) {
-    const product = await this.productsService.create(input, categoryId, true);
+    const product = await this.productsService.create(input, categoryId);
 
     return product;
   }
   //Update not working, waiting for revision
   @Mutation(() => ProductModel)
   async updateProduct(@Args('input') input: UpdateProductModel) {
-    const product = await this.productsService.update(input.id, input, true);
+    const product = await this.productsService.update(input.id, input);
 
     return product;
   }
   //Update not working, waiting for revision
   @Mutation(() => ProductModel)
   async removeProduct(@Args('id', { type: () => Int }) id: number) {
-    const deletedProduct = await this.productsService.remove(id, true);
+    const deletedProduct = await this.productsService.remove(id);
 
     return deletedProduct;
   }

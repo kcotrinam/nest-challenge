@@ -8,7 +8,8 @@ import { RolesGuard } from '../../auth/guards/role.guard';
 import { CurrentUser } from '../../auth/decorators/curret-user.decorator';
 import { GqlAuthGuard } from '../../auth/guards/gql-auth.guard';
 import { CurrentUserGuard } from '../../auth/guards/curretn-user.guard';
-import { PaginationGql } from 'src/utils/args/pagination.args';
+import { PaginationGql } from '../../utils/args/pagination.args';
+// import { PaginationGql } from '../../utils'
 
 @Resolver(() => CategoryModel)
 export class CategoriesResolver {
@@ -39,7 +40,7 @@ export class CategoriesResolver {
     @CurrentUser() user,
     @Args('input') input: CreateCategoryModel,
   ) {
-    const category = await this.categoriesService.create(input, user);
+    const category = await this.categoriesService.create(input);
 
     return category;
   }
@@ -50,7 +51,7 @@ export class CategoriesResolver {
     @CurrentUser() user,
     @Args('input') input: UpdateCategoryModel,
   ) {
-    const category = await this.categoriesService.update(input.id, user, input);
+    const category = await this.categoriesService.update(input.id, user);
     return category;
   }
 
@@ -60,7 +61,7 @@ export class CategoriesResolver {
     @CurrentUser() user,
     @Args('id', { type: () => Int }) id: number,
   ) {
-    const deletedCategory = await this.categoriesService.remove(id, user);
+    const deletedCategory = await this.categoriesService.remove(id);
     return deletedCategory;
   }
 }
