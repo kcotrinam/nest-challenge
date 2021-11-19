@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { getEdges } from 'src/utils/args/pagination.args';
+import { getEdges } from '../utils/args/pagination.args';
 import { PaginationQueryDto } from '../pagination/dtos/pagination-query.dto';
 import { paginatedHelper } from '../pagination/pagination.helper';
 import { paginationSerializer } from '../pagination/serializer';
@@ -15,20 +15,9 @@ import { OrderModel } from './models/order.model';
 export class OrdersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(
-    paginationQuery: PaginationQueryDto,
-    userRole: boolean,
-    isRestLayer = true,
-  ) {
+  async findAll(paginationQuery: PaginationQueryDto, isRestLayer = true) {
     const { page, perPage } = paginationQuery;
     const { skip, take } = paginatedHelper(paginationQuery);
-
-    if (!userRole) {
-      throw new HttpException(
-        errorMessage(HttpStatus.FORBIDDEN, 'YOU ARE NOT AUTHORIZED'),
-        HttpStatus.FORBIDDEN,
-      );
-    }
 
     const total = await this.prisma.order.count();
     const orders = await this.prisma.order.findMany({

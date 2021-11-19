@@ -9,6 +9,11 @@ import { TokensService } from '../tokens/tokens.service';
 import { HttpException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/request/create-order.dto';
 import { UpdateOrderDto } from './dto/request/update-order.dto';
+import { UsersModule } from '../users/users.module';
+import { SendgridModule } from '../sendgrid/sendgrid.module';
+import { AuthModule } from '../auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
 
 const adminUser = {
   name: faker.name.findName(),
@@ -47,7 +52,22 @@ describe('OrdersService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OrdersService, PrismaService, AuthService, TokensService],
+      imports: [
+        UsersModule,
+        SendgridModule,
+        AuthModule,
+        JwtModule.register({
+          secret: process.env.JWT_SECRET,
+          signOptions: { expiresIn: '60h' },
+        }),
+      ],
+      providers: [
+        OrdersService,
+        PrismaService,
+        UsersService,
+        AuthService,
+        TokensService,
+      ],
     }).compile();
 
     service = module.get<OrdersService>(OrdersService);
@@ -78,14 +98,14 @@ describe('OrdersService', () => {
   describe('findAll', () => {
     it('should return and exception when no the manager orders', async () => {
       try {
-        await service.findAll({ page: 1, perPage: 10 }, false, 1);
+        await service.findAll({ page: 1, perPage: 10 }, false);
       } catch (error) {
         expect(error).toBeInstanceOf(HttpException);
       }
     });
 
     it('should return all the orders', async () => {
-      const orders = await service.findAll({ page: 1, perPage: 10 }, true, 1);
+      const orders = await service.findAll({ page: 1, perPage: 10 }, true);
 
       expect(orders.data).toHaveLength(2);
       expect(orders.data[0].id).toBe(orderCreatedOne.id);
@@ -94,14 +114,13 @@ describe('OrdersService', () => {
   });
 
   describe('findOwnOrders', () => {
-    it('should return and exception when no the manager orders', async () => {
+    it('should return an empty array', async () => {
       const result = await service.findOwnOrders(
         { page: 1, perPage: 10 },
         userAdmin.id,
       );
 
-      expect(result).toHaveProperty('data');
-      expect(result.data).toHaveLength(0);
+      expect(result).toHaveLength(0);
     });
 
     it('should return all the orders', async () => {
@@ -110,9 +129,9 @@ describe('OrdersService', () => {
         userRegular.id,
       );
 
-      expect(orders.data).toHaveLength(2);
-      expect(orders.data[0].id).toBe(orderCreatedOne.id);
-      expect(orders.data[1].id).toBe(orderCreatedTwo.id);
+      expect(orders).toHaveLength(2);
+      expect(orders[0].id).toBe(orderCreatedOne.id);
+      expect(orders[1].id).toBe(orderCreatedTwo.id);
     });
   });
 
@@ -161,7 +180,7 @@ describe('OrdersService', () => {
     it('should return the order deleted', async () => {
       const order = await service.delete(orderCreatedOne.id, userRegular.id);
 
-      expect(order).toBeUndefined();
+      expect(order).toHaveProperty('id');
     });
 
     it('should return an exception when the user is not the owner', async () => {

@@ -26,7 +26,6 @@ export class OrdersResolver {
         page,
         perPage,
       },
-      user,
       false,
     );
 

@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { CursorPaginated } from 'src/utils/args/pagination.args';
+import { CursorPaginated } from '../../utils/args/pagination.args';
 
 @ObjectType()
 export class OrderModel {
